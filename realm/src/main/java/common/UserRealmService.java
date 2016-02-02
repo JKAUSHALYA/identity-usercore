@@ -3,6 +3,7 @@ package common;
 import manager.AuthenticationManager;
 import manager.AuthorizationManager;
 import manager.ClaimManager;
+import manager.IdentityManager;
 
 /**
  * Created by damith on 2/2/16.
@@ -19,6 +20,10 @@ public class UserRealmService {
 
     public ClaimManager getClaimManager () {
         return new ClaimManager();
+    }
+
+    public IdentityManager getIdentityManager() {
+        return new IdentityManager();
     }
 
 }

@@ -1,13 +1,13 @@
-package org.wso2.carbon.identity;
+import common.UserRealmService;
+import manager.AuthenticationManager;
 
 import java.util.Scanner;
 
 /**
- * Hello world!
- *
+ * Created by damith on 2/2/16.
  */
-public class App 
-{
+public class AppTest {
+
     public static void main( String[] args )
     {
 
