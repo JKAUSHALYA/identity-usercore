@@ -1,5 +1,6 @@
 import common.UserRealmService;
 import manager.AuthenticationManager;
+import manager.AuthorizationManager;
 
 import java.util.Scanner;
 
@@ -25,8 +26,12 @@ public class AppTest {
 
         AuthenticationManager authManager = realmService.getAuthenticationManager();
 
+        AuthorizationManager authzManager = realmService.getAuthorizationManager();
+
         if (authManager.authenticate(userName, password)) {
             System.out.println("Authentication Successful");
+        } else {
+            System.out.println("Authentication failed");
         }
     }
 }
