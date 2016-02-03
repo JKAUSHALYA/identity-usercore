@@ -2,7 +2,9 @@ package manager;
 
 import common.UserRealmService;
 import principal.PrincipalObject;
+import stores.UserRole;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,23 +13,17 @@ import java.util.Map;
  */
 public class AuthorizationManager extends PersistenceManager {
 
-    Map<String, String[]> permissionsOfRoles;
-
-    IdentityManager identityManager;
 
     public AuthorizationManager() {
-        identityManager = new UserRealmService().getIdentityManager();
-        permissionsOfRoles = new HashMap<String, String[]>();
-        permissionsOfRoles.put("ADMIN", new String [] {"/permissions/login"});
     }
 
     public boolean isUserAuthorized(String user, String permission) {
 
-        PrincipalObject userObject = identityManager.getPrincipalByUserName(user);
-        String[] roles = userObject.getUserRoles();
+        ArrayList<String> roles = UserRealmService.getIdentityManager().getRolesOfUser(user);
 
         for (String role : roles) {
-            String [] permissionList = permissionsOfRoles.get(role);
+            UserRole roleObject = UserRealmService.getIdentityManager().getRole(role);
+            ArrayList<String> permissionList = roleObject.getPermissions();
             for (String permissionCheck : permissionList) {
                 if (permissionCheck.equals(permission)) {
                     return true;

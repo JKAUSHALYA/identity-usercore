@@ -10,20 +10,39 @@ import manager.IdentityManager;
  */
 public class UserRealmService {
 
-    public AuthenticationManager getAuthenticationManager(){
-        return new AuthenticationManager();
+    private static AuthenticationManager authenticationManager;
+    private static AuthorizationManager authorizationManager;
+    private static IdentityManager identityManager;
+
+    private static UserRealmService instance;
+
+    public static UserRealmService getInstance() {
+        if(instance == null) {
+            instance = new UserRealmService();
+        }
+        return instance;
     }
 
-    public AuthorizationManager getAuthorizationManager() {
-        return new AuthorizationManager();
+    private UserRealmService () {
+        authenticationManager = new AuthenticationManager();
+        authorizationManager = new AuthorizationManager();
+        identityManager = new IdentityManager();
     }
 
-    public ClaimManager getClaimManager () {
+    public static AuthenticationManager getAuthenticationManager(){
+        return authenticationManager;
+    }
+
+    public static AuthorizationManager getAuthorizationManager() {
+        return authorizationManager;
+    }
+
+    public static ClaimManager getClaimManager () {
         return new ClaimManager();
     }
 
-    public IdentityManager getIdentityManager() {
-        return new IdentityManager();
+    public static IdentityManager getIdentityManager() {
+        return identityManager;
     }
 
 }
