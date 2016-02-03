@@ -1,8 +1,6 @@
 package manager;
 
 import common.UserRealmService;
-import principal.PrincipalObject;
-import stores.AbstractUserStore;
 
 /**
  * Created by damith on 2/2/16.
@@ -22,7 +20,7 @@ public class AuthenticationManager extends PersistenceManager {
 //        if (claimAttribute.equals("userName")) {
 //            if (claimValue.indexOf("/") > 0) {
 //                String userName = claimValue.substring(claimValue.indexOf("/"));
-//                PrincipalObject user = UserRealmService.getIdentityManager().getUserStores().get(claimValue.substring(claimValue
+//                IdentityObject user = UserRealmService.getIdentityManager().getUserStores().get(claimValue.substring(claimValue
 //                        .indexOf("/"))).searchUser
 //                        (claimAttribute, userName);
 //

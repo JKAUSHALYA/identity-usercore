@@ -1,10 +1,7 @@
 package stores;
 
 import manager.PersistenceManager;
-import principal.PrincipalObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import principal.IdentityObject;
 
 /**
  * Created by damith on 2/3/16.
@@ -13,19 +10,19 @@ public abstract class AbstractUserStore extends PersistenceManager {
 
     
 
-    public boolean addUser(PrincipalObject user) {
+    public boolean addUser(IdentityObject user) {
         persistUser(user);
         return true;
     }
     
-    abstract protected void persistUser(PrincipalObject user);
+    abstract protected void persistUser(IdentityObject user);
 
-    public PrincipalObject searchUser(String claimAttribute, String value) {
+    public IdentityObject searchUser(String claimAttribute, String value) {
         
         return retrieveUser(claimAttribute, value);
     }
 
-    protected abstract PrincipalObject retrieveUser(String claimAttribute, String value);
+    protected abstract IdentityObject retrieveUser(String claimAttribute, String value);
     
     public UserRole searchRole(String roleName) {
         return retrieveRole(roleName);

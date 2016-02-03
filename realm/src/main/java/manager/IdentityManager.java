@@ -1,6 +1,7 @@
 package manager;
 
-import principal.PrincipalObject;
+import context.AuthenticationContext;
+import principal.IdentityObject;
 import stores.AbstractUserStore;
 import stores.UserRole;
 
@@ -10,7 +11,7 @@ import java.util.HashMap;
 /**
  * Created by damith on 2/2/16.
  */
-public class IdentityManager extends PersistenceManager {
+public abstract class IdentityManager extends PersistenceManager {
 
 
 
@@ -20,20 +21,31 @@ public class IdentityManager extends PersistenceManager {
 
     }
 
-    public boolean authenticate (String claimAttribute, String claimValue, Object credential) {
+    public AuthenticationContext authenticate (Object credential);
+    public AuthenticationContext authenticate (String userid, char[] password);
+
+
+    public AuthenticationContext authenticate (String userid, Object credential);
+
+    public String searchUserFromClaim(String claimAttribute, String claimValue) {
+        String userid;
+        return userid;
+    }
+
+    public AuthenticationContext authenticate (String claimAttribute, String claimValue, Object credential) {
         //TODO: create authentication context with user, user store and other information
         if (claimAttribute.equals("userName")) {
             if (claimValue.indexOf("/") > 0) {
                 String userName = claimValue.substring(claimValue.indexOf("/")+1);
-                PrincipalObject user = userStores.get(claimValue.substring(0,claimValue.indexOf("/"))).searchUser
+                IdentityObject user = userStores.get(claimValue.substring(0,claimValue.indexOf("/"))).searchUser
                         (claimAttribute, userName);
 
-                return user.getPassword().equals(credential);
+                //return user.getPassword().equals(credential);
             } else {
                 for (AbstractUserStore store : userStores.values()) {
                     try {
                         if (store.searchUser(claimAttribute, claimValue).getPassword().equals(credential)){
-                            return true;
+                            //return true;
                         }
                     } catch (Exception e) {
                         continue;
@@ -41,7 +53,7 @@ public class IdentityManager extends PersistenceManager {
                 }
             }
         }
-        return false;
+        return new AuthenticationContext();
     }
 
     private ArrayList<String> prependStoreName(String storeName, ArrayList<String> nameList) {

@@ -1,12 +1,9 @@
 package manager;
 
 import common.UserRealmService;
-import principal.PrincipalObject;
 import stores.UserRole;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by damith on 2/2/16.

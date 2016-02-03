@@ -2,12 +2,10 @@ import common.UserRealmService;
 import impl.InMemoryUserStore;
 import manager.AuthenticationManager;
 import manager.AuthorizationManager;
-import principal.PrincipalObject;
+import principal.IdentityObject;
 import stores.AbstractUserStore;
 import stores.UserRole;
 
-import javax.jws.soap.SOAPBinding;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -19,7 +17,7 @@ public class AppTest {
 
     public static void configure() {
         InMemoryUserStore store = new InMemoryUserStore();
-        PrincipalObject user = new PrincipalObject();
+        IdentityObject user = new IdentityObject();
 
         user.setUserName("admin");
         user.setPassword("password");
