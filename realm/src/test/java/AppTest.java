@@ -30,6 +30,11 @@ public class AppTest {
 
         if (authManager.authenticate(userName, password)) {
             System.out.println("Authentication Successful");
+            if (authzManager.isUserAuthorized(userName, "/permissions/login") ) {
+                System.out.println("User Authorized, Login successful!");
+            } else {
+                System.out.println("user not allowed to login!");
+            }
         } else {
             System.out.println("Authentication failed");
         }

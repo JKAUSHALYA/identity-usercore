@@ -6,7 +6,7 @@ package principal;
 public class PrincipalObject {
     private Object password = "password";
     String userName = "admin";
-
+    private String[] userRoles;
 
     public Object getPassword() {
         return password;
@@ -14,5 +14,9 @@ public class PrincipalObject {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String[] getUserRoles() {
+        return new String[]{"ADMIN"};
     }
 }
