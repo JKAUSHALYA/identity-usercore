@@ -1,4 +1,5 @@
 import common.UserRealmService;
+import context.AuthenticationContext;
 import impl.InMemoryUserStore;
 import manager.AuthenticationManager;
 import manager.AuthorizationManager;
@@ -58,8 +59,8 @@ public class AppTest {
         AuthenticationManager authManager = UserRealmService.getInstance().getAuthenticationManager();
 
         AuthorizationManager authzManager = UserRealmService.getInstance().getAuthorizationManager();
-
-        if (authManager.authenticate("userName", userName, password)) {
+        AuthenticationContext context = authManager.authenticate( userName, password);
+        if (context.isAuthenticated()) {
             System.out.println("Authentication Successful");
             if (authzManager.isUserAuthorized(userName, "/permissions/login") ) {
                 System.out.println("User Authorized, Login successful!");
@@ -68,6 +69,7 @@ public class AppTest {
             }
         } else {
             System.out.println("Authentication failed");
+            context.getCauseOfFailure().printStackTrace();
         }
     }
 }

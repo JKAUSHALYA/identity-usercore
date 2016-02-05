@@ -9,21 +9,36 @@ import util.AuthenticationStatus;
  */
 public class AuthenticationContext {
     IdentityObject[] identityObject;
+    private IdentityObject subject;
+    private boolean isAuthenticated;
+    private AuthenticationFailure failure;
 
 
     public IdentityObject getSubject() {
-        return null;
+        return subject;
     }
 
 
+    public void setAuthenticated(boolean authenticated) {
+        this.isAuthenticated = authenticated;
+    }
     public boolean isAuthenticated() {
-        return false;
+        return isAuthenticated;
     }
 
     public AuthenticationFailure getCauseOfFailure() {
-        return null;
+        if (this.isAuthenticated) {
+            return null;
+        }
+        return failure;
     }
 
 
+    public void setSubject(IdentityObject subject) {
+        this.subject = subject;
+    }
 
+    public void setFailure(AuthenticationFailure failure) {
+        this.failure = failure;
+    }
 }

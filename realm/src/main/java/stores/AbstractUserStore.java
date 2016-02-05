@@ -17,6 +17,10 @@ public abstract class AbstractUserStore extends PersistenceManager {
     
     abstract protected void persistUser(IdentityObject user);
 
+    public IdentityObject searchUser(String userID) {
+        return retrieveUser("userName", userID);
+    }
+
     public IdentityObject searchUser(String claimAttribute, String value) {
         
         return retrieveUser(claimAttribute, value);

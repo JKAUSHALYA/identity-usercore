@@ -4,6 +4,7 @@ import context.AuthenticationContext;
 import principal.IdentityObject;
 import stores.AbstractUserStore;
 import stores.UserRole;
+import util.AuthenticationFailure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +12,7 @@ import java.util.HashMap;
 /**
  * Created by damith on 2/2/16.
  */
-public abstract class IdentityManager extends PersistenceManager {
-
+public class IdentityManager extends PersistenceManager {
 
 
     private HashMap<String, AbstractUserStore> userStores;
@@ -21,30 +21,88 @@ public abstract class IdentityManager extends PersistenceManager {
 
     }
 
-    public AuthenticationContext authenticate (Object credential);
-    public AuthenticationContext authenticate (String userid, char[] password);
-
-
-    public AuthenticationContext authenticate (String userid, Object credential);
-
-    public String searchUserFromClaim(String claimAttribute, String claimValue) {
-        String userid;
-        return userid;
+    public AuthenticationContext authenticate(Object credential) {
+        return null;
     }
 
-    public AuthenticationContext authenticate (String claimAttribute, String claimValue, Object credential) {
+    public AuthenticationContext authenticate(String userid, char[] password) {
+        return null;
+    }
+
+
+    public AuthenticationContext authenticate(String userid, Object credential) {
+
+        AuthenticationContext context = new AuthenticationContext();
+        boolean isAuthenticated = false;
+        IdentityObject subject = null;
+        try {
+
+                if (userid.indexOf("/") > 0) {
+                    String userName = userid.substring(userid.indexOf("/") + 1);
+
+                    IdentityObject user = userStores.get(userid.substring(0, userid.indexOf("/"))).searchUser
+                            (userName);
+                    isAuthenticated = user.getPassword().equals(credential);
+                    if (isAuthenticated) {
+                        context.setSubject(user);
+                    }
+                    //return user.getPassword().equals(credential);
+                } else {
+                    for (AbstractUserStore store : userStores.values()) {
+                        if (store.searchUser(userid).getPassword().equals(credential)) {
+                            context.setSubject(store.searchUser(userid));
+                            isAuthenticated = true;
+                        }
+
+                    }
+                }
+
+            context.setAuthenticated(isAuthenticated);
+
+        } catch (Exception e) {
+            context.setFailure(new AuthenticationFailure(e));
+        }
+        return context;
+    }
+
+    public String searchUserFromClaim(String claimAttribute, String claimValue) {
+        if (claimAttribute.equals("userName")) {
+            if (claimValue.indexOf("/") > 0) {
+                String userName = claimValue.substring(claimValue.indexOf("/") + 1);
+
+                IdentityObject user = userStores.get(claimValue.substring(0, claimValue.indexOf("/"))).searchUser
+                        (userName);
+
+                return user.getUserName();
+            } else {
+                for (AbstractUserStore store : userStores.values()) {
+                    try {
+                        if (store.searchUser(claimValue) != null) {
+                            return store.searchUser(claimValue).getUserName();
+                        }
+                    } catch (Exception e) {
+                        continue;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public AuthenticationContext authenticate(String claimAttribute, String claimValue, Object credential) {
         //TODO: create authentication context with user, user store and other information
         if (claimAttribute.equals("userName")) {
             if (claimValue.indexOf("/") > 0) {
-                String userName = claimValue.substring(claimValue.indexOf("/")+1);
-                IdentityObject user = userStores.get(claimValue.substring(0,claimValue.indexOf("/"))).searchUser
-                        (claimAttribute, userName);
+                String userName = claimValue.substring(claimValue.indexOf("/") + 1);
+
+                IdentityObject user = userStores.get(claimValue.substring(0, claimValue.indexOf("/"))).searchUser
+                        (userName);
 
                 //return user.getPassword().equals(credential);
             } else {
                 for (AbstractUserStore store : userStores.values()) {
                     try {
-                        if (store.searchUser(claimAttribute, claimValue).getPassword().equals(credential)){
+                        if (store.searchUser(claimValue).getPassword().equals(credential)) {
                             //return true;
                         }
                     } catch (Exception e) {
@@ -65,16 +123,22 @@ public abstract class IdentityManager extends PersistenceManager {
 
         return temp;
     }
+
     public ArrayList<String> getRolesOfUser(String username) {
-        return prependStoreName(username.substring(0,username.indexOf("/")), userStores.get(username.substring(0,
-                username
-                .indexOf("/"))).searchUser("userName",username.substring(username.indexOf("/")+1))
+        String storeName = "PRIMARY";
+        String userName = username;
+        if (username.indexOf("/") > 0) {
+
+            storeName = username.substring(0, username.indexOf("/"));
+            userName = username.substring(username.indexOf("/") + 1);
+        }
+        return prependStoreName(storeName, userStores.get(storeName).searchUser("userName", userName )
                 .getMemberOf());
     }
 
-    public UserRole getRole(String roleName){
+    public UserRole getRole(String roleName) {
         return userStores.get(roleName.substring(0, roleName.indexOf("/"))).searchRole(roleName.substring(roleName
-                .indexOf("/")+1));
+                .indexOf("/") + 1));
     }
 
     public HashMap<String, AbstractUserStore> getUserStores() {
