@@ -1,20 +1,32 @@
 import common.UserRealmService;
 import context.AuthenticationContext;
 import impl.InMemoryUserStore;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import manager.AuthenticationManager;
 import manager.AuthorizationManager;
+import org.junit.Assert;
 import principal.IdentityObject;
 import stores.AbstractUserStore;
 import stores.UserRole;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 /**
- * Created by damith on 2/2/16.
+ * Main test class.
  */
-public class AppTest {
+public class AppTest extends TestCase {
+
+    public AppTest(String testName) {
+        super(testName);
+    }
+
+    public static Test suite() {
+
+        return new TestSuite(AppTest.class);
+    }
 
     public static void configure() {
         InMemoryUserStore store = new InMemoryUserStore();
@@ -41,35 +53,19 @@ public class AppTest {
         stores.put("PRIMARY", store);
         UserRealmService.getInstance().getIdentityManager().setUserStores(stores);
     }
-    public static void main( String[] args )
-    {
+
+    public static void testApp() {
 
         configure();
-        Scanner input = new Scanner(System.in);
 
-        System.out.println("Enter User Name : ");
-
-        String userName = input.next();
-
-        System.out.println(" Enter Password : ");
-
-        String password = input.next();
-
+        String userName = "admin";
+        String password = "password";
 
         AuthenticationManager authManager = UserRealmService.getInstance().getAuthenticationManager();
-
         AuthorizationManager authzManager = UserRealmService.getInstance().getAuthorizationManager();
         AuthenticationContext context = authManager.authenticate( userName, password);
-        if (context.isAuthenticated()) {
-            System.out.println("Authentication Successful");
-            if (authzManager.isUserAuthorized(userName, "/permissions/login") ) {
-                System.out.println("User Authorized, Login successful!");
-            } else {
-                System.out.println("user not allowed to login!");
-            }
-        } else {
-            System.out.println("Authentication failed");
-            context.getCauseOfFailure().printStackTrace();
-        }
+
+        Assert.assertTrue(context.isAuthenticated());
+        Assert.assertTrue(authzManager.isUserAuthorized(userName, "/permissions/login") );
     }
 }
