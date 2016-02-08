@@ -1,13 +1,12 @@
 import common.UserRealmService;
+import context.AuthenticationContext;
 import impl.InMemoryUserStore;
 import manager.AuthenticationManager;
 import manager.AuthorizationManager;
-import principal.PrincipalObject;
+import principal.IdentityObject;
 import stores.AbstractUserStore;
 import stores.UserRole;
 
-import javax.jws.soap.SOAPBinding;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -19,7 +18,7 @@ public class AppTest {
 
     public static void configure() {
         InMemoryUserStore store = new InMemoryUserStore();
-        PrincipalObject user = new PrincipalObject();
+        IdentityObject user = new IdentityObject();
 
         user.setUserName("admin");
         user.setPassword("password");
@@ -60,8 +59,8 @@ public class AppTest {
         AuthenticationManager authManager = UserRealmService.getInstance().getAuthenticationManager();
 
         AuthorizationManager authzManager = UserRealmService.getInstance().getAuthorizationManager();
-
-        if (authManager.authenticate("userName", userName, password)) {
+        AuthenticationContext context = authManager.authenticate( userName, password);
+        if (context.isAuthenticated()) {
             System.out.println("Authentication Successful");
             if (authzManager.isUserAuthorized(userName, "/permissions/login") ) {
                 System.out.println("User Authorized, Login successful!");
@@ -70,6 +69,7 @@ public class AppTest {
             }
         } else {
             System.out.println("Authentication failed");
+            context.getCauseOfFailure().printStackTrace();
         }
     }
 }

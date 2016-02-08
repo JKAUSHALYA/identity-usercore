@@ -5,15 +5,15 @@ import java.util.ArrayList;
 /**
  * Created by damith on 2/2/16.
  */
-public class PrincipalObject {
+public class IdentityObject {
     private Object password;
     private String userName ;
     private ArrayList<String> memberOf;
 
-    public PrincipalObject() {
+    public IdentityObject() {
         memberOf = new ArrayList<String>();
     }
-    public PrincipalObject(String name) {
+    public IdentityObject(String name) {
         this.userName = name;
     }
 
