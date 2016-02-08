@@ -1,15 +1,17 @@
-import common.UserRealmService;
-import context.AuthenticationContext;
-import impl.InMemoryUserStore;
+
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import manager.AuthenticationManager;
-import manager.AuthorizationManager;
-import org.junit.Assert;
-import principal.IdentityObject;
-import stores.AbstractUserStore;
-import stores.UserRole;
+import org.wso2.carbon.identity.user.core.common.UserRealmService;
+import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
+import org.wso2.carbon.identity.user.core.impl.InMemoryUserStore;
+import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
+import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
+import org.wso2.carbon.identity.user.core.stores.UserRole;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,9 +65,9 @@ public class AppTest extends TestCase {
 
         AuthenticationManager authManager = UserRealmService.getInstance().getAuthenticationManager();
         AuthorizationManager authzManager = UserRealmService.getInstance().getAuthorizationManager();
-        AuthenticationContext context = authManager.authenticate( userName, password);
+        AuthenticationContext context = authManager.authenticate(userName, password);
 
         Assert.assertTrue(context.isAuthenticated());
-        Assert.assertTrue(authzManager.isUserAuthorized(userName, "/permissions/login") );
+        Assert.assertTrue(authzManager.isUserAuthorized(userName, "/permissions/login"));
     }
 }
