@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.identity.user.core.manager;
 
+import org.wso2.carbon.identity.user.core.UserStoreException;
 import org.wso2.carbon.identity.user.core.common.UserRealmService;
 import org.wso2.carbon.identity.user.core.stores.UserRole;
 
@@ -30,7 +31,7 @@ public class AuthorizationManager implements PersistenceManager {
     public AuthorizationManager() {
     }
 
-    public boolean isUserAuthorized(String user, String permission) {
+    public boolean isUserAuthorized(String user, String permission) throws UserStoreException {
 
         ArrayList<String> roles = UserRealmService.getInstance().getIdentityManager().getRolesOfUser(user);
 

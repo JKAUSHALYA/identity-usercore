@@ -17,12 +17,29 @@
 package org.wso2.carbon.identity.user.core.stores;
 
 import org.wso2.carbon.identity.user.core.UserStore;
+import org.wso2.carbon.identity.user.core.UserStoreException;
 import org.wso2.carbon.identity.user.core.manager.PersistenceManager;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+
+import java.util.Properties;
 
 /**
  * AbstractUserStore
  */
 public abstract class AbstractUserStore implements UserStore, PersistenceManager {
 
+    private Properties userStoreProperties;
+
+    public void init(Properties properties) throws UserStoreException {
+        if(properties != null){
+            this.userStoreProperties = properties;
+        }else {
+            this.userStoreProperties = new Properties();
+        }
+    }
+
+    @Override
+    public Properties getUserStoreProperties() {
+        return userStoreProperties;
+    }
 }

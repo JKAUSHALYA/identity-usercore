@@ -19,6 +19,7 @@ package org.wso2.carbon.identity.user.core.manager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.identity.user.core.UserStore;
+import org.wso2.carbon.identity.user.core.UserStoreException;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
@@ -41,16 +42,16 @@ public class IdentityManager implements PersistenceManager {
 
     }
 
-    public AuthenticationContext authenticate(Object credential) {
+    public AuthenticationContext authenticate(Object credential) throws UserStoreException{
         return null;
     }
 
-    public AuthenticationContext authenticate(String userid, char[] password) {
+    public AuthenticationContext authenticate(String userid, char[] password) throws UserStoreException {
         return null;
     }
 
 
-    public AuthenticationContext authenticate(String userid, Object credential) {
+    public AuthenticationContext authenticate(String userid, Object credential) throws UserStoreException {
 
         AuthenticationContext context = new AuthenticationContext();
         boolean isAuthenticated = false;
@@ -85,7 +86,7 @@ public class IdentityManager implements PersistenceManager {
         return context;
     }
 
-    public String searchUserFromClaim(String claimAttribute, String claimValue) {
+    public String searchUserFromClaim(String claimAttribute, String claimValue) throws UserStoreException {
         if (claimAttribute.equals("userName")) {
             if (!(claimValue.indexOf("/") < 0)) {
                 String userName = claimValue.substring(claimValue.indexOf("/") + 1);
@@ -109,7 +110,8 @@ public class IdentityManager implements PersistenceManager {
         return null;
     }
 
-    public AuthenticationContext authenticate(String claimAttribute, String claimValue, Object credential) {
+    public AuthenticationContext authenticate(String claimAttribute, String claimValue, Object credential) throws
+            UserStoreException {
         //TODO: create authentication context with user, user store and other information
         if (claimAttribute.equals("userName")) {
             if (!(claimValue.indexOf("/") < 0)) {
@@ -129,7 +131,7 @@ public class IdentityManager implements PersistenceManager {
         return new AuthenticationContext();
     }
 
-    private ArrayList<String> prependStoreName(String storeName, ArrayList<String> nameList) {
+    private ArrayList<String> prependStoreName(String storeName, ArrayList<String> nameList) throws UserStoreException {
         ArrayList<String> temp = new ArrayList<String>();
 
         for (String name : nameList) {
@@ -139,7 +141,7 @@ public class IdentityManager implements PersistenceManager {
         return temp;
     }
 
-    public ArrayList<String> getRolesOfUser(String username) {
+    public ArrayList<String> getRolesOfUser(String username) throws UserStoreException {
         String storeName = "PRIMARY";
         String userName = username;
         if (!(username.indexOf("/") < 0)) {
@@ -151,16 +153,16 @@ public class IdentityManager implements PersistenceManager {
                 .getMemberOf());
     }
 
-    public UserRole getRole(String roleName) {
+    public UserRole getRole(String roleName) throws UserStoreException {
         return userStores.get(roleName.substring(0, roleName.indexOf("/"))).searchRole(roleName.substring(roleName
                 .indexOf("/") + 1));
     }
 
-    public HashMap<String, UserStore> getUserStores() {
+    public HashMap<String, UserStore> getUserStores() throws UserStoreException {
         return userStores;
     }
 
-    public void setUserStores(HashMap<String, UserStore> userStores) {
+    public void setUserStores(HashMap<String, UserStore> userStores) throws UserStoreException {
         this.userStores = userStores;
     }
 }

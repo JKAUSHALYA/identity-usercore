@@ -3,26 +3,36 @@ package org.wso2.carbon.identity.user.core;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.UserRole;
 
+import java.util.Properties;
+
 public interface UserStore {
 
-    boolean addUser(IdentityObject user);
+    void init(Properties properties) throws UserStoreException ;
 
-    void persistUser(IdentityObject user);
+    int getExecutionOrder();
 
-    IdentityObject searchUser(String userID);
+    boolean addUser(IdentityObject user) throws UserStoreException;
 
-    IdentityObject searchUser(String claimAttribute, String value);
+    void persistUser(IdentityObject user) throws UserStoreException;
 
-    IdentityObject retrieveUser(String claimAttribute, String value);
+    IdentityObject searchUser(String userID) throws UserStoreException;
 
-    UserRole retrieveRole(String roleName);
+    IdentityObject searchUser(String claimAttribute, String value) throws UserStoreException;
 
-    boolean addRole(UserRole role);
+    IdentityObject retrieveUser(String claimAttribute, String value) throws UserStoreException;
 
-    void persistRole(UserRole role);
+    UserRole retrieveRole(String roleName) throws UserStoreException;
 
-    boolean isReadOnly();
+    boolean addRole(UserRole role) throws UserStoreException;
 
-    UserRole searchRole(String roleName);
+    void persistRole(UserRole role) throws UserStoreException;
+
+    boolean isReadOnly() throws UserStoreException;
+
+    UserRole searchRole(String roleName) throws UserStoreException;
+
+    String getUserStoreName();
+
+    Properties getUserStoreProperties();
 
 }
