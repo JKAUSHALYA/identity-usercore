@@ -1,4 +1,4 @@
-package manager;
+package org.wso2.carbon.identity.user.core.manager;
 
 /**
  * Created by damith on 2/2/16.

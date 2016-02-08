@@ -1,4 +1,4 @@
-package stores;
+package org.wso2.carbon.identity.user.core.stores;
 
 import java.util.ArrayList;
 

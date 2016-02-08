@@ -1,14 +1,13 @@
-package context;
+package org.wso2.carbon.identity.user.core.context;
 
-import principal.IdentityObject;
-import util.AuthenticationFailure;
-import util.AuthenticationStatus;
+
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.util.AuthenticationFailure;
 
 /**
  * Created by damith on 2/3/16.
  */
 public class AuthenticationContext {
-    IdentityObject[] identityObject;
     private IdentityObject subject;
     private boolean isAuthenticated;
     private AuthenticationFailure failure;

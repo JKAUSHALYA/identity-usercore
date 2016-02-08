@@ -1,4 +1,4 @@
-package principal;
+package org.wso2.carbon.identity.user.core.principal;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class IdentityObject {
     private Object password;
-    private String userName ;
+    private String userName;
     private ArrayList<String> memberOf;
 
     public IdentityObject() {

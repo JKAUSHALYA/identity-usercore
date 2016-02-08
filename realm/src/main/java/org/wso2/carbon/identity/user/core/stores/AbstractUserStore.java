@@ -1,7 +1,8 @@
-package stores;
+package org.wso2.carbon.identity.user.core.stores;
 
-import manager.PersistenceManager;
-import principal.IdentityObject;
+
+import org.wso2.carbon.identity.user.core.manager.PersistenceManager;
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
 /**
  * Created by damith on 2/3/16.
@@ -14,8 +15,8 @@ public abstract class AbstractUserStore extends PersistenceManager {
         persistUser(user);
         return true;
     }
-    
-    abstract protected void persistUser(IdentityObject user);
+
+    protected abstract void persistUser(IdentityObject user);
 
     public IdentityObject searchUser(String userID) {
         return retrieveUser("userName", userID);
@@ -39,6 +40,6 @@ public abstract class AbstractUserStore extends PersistenceManager {
         return true;
     }
 
-    abstract protected  void persistRole(UserRole role);
+    protected abstract void persistRole(UserRole role);
 
 }

@@ -1,11 +1,15 @@
-import common.UserRealmService;
-import context.AuthenticationContext;
-import impl.InMemoryUserStore;
-import manager.AuthenticationManager;
-import manager.AuthorizationManager;
-import principal.IdentityObject;
-import stores.AbstractUserStore;
-import stores.UserRole;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.identity.user.core.common.UserRealmService;
+import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
+import org.wso2.carbon.identity.user.core.impl.InMemoryUserStore;
+import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
+import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
+import org.wso2.carbon.identity.user.core.stores.UserRole;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +19,7 @@ import java.util.Scanner;
  * Created by damith on 2/2/16.
  */
 public class AppTest {
+    private static final Logger log = LoggerFactory.getLogger(AppTest.class);
 
     public static void configure() {
         InMemoryUserStore store = new InMemoryUserStore();
@@ -41,17 +46,17 @@ public class AppTest {
         stores.put("PRIMARY", store);
         UserRealmService.getInstance().getIdentityManager().setUserStores(stores);
     }
-    public static void main( String[] args )
-    {
+
+    public static void main(String[] args) {
 
         configure();
         Scanner input = new Scanner(System.in);
 
-        System.out.println("Enter User Name : ");
+        log.info("Enter User Name : ");
 
         String userName = input.next();
 
-        System.out.println(" Enter Password : ");
+        log.info(" Enter Password : ");
 
         String password = input.next();
 
@@ -59,16 +64,16 @@ public class AppTest {
         AuthenticationManager authManager = UserRealmService.getInstance().getAuthenticationManager();
 
         AuthorizationManager authzManager = UserRealmService.getInstance().getAuthorizationManager();
-        AuthenticationContext context = authManager.authenticate( userName, password);
+        AuthenticationContext context = authManager.authenticate(userName, password);
         if (context.isAuthenticated()) {
-            System.out.println("Authentication Successful");
-            if (authzManager.isUserAuthorized(userName, "/permissions/login") ) {
-                System.out.println("User Authorized, Login successful!");
+            log.info("Authentication Successful");
+            if (authzManager.isUserAuthorized(userName, "/permissions/login")) {
+               log.info("User Authorized, Login successful!");
             } else {
-                System.out.println("user not allowed to login!");
+                log.info("user not allowed to login!");
             }
         } else {
-            System.out.println("Authentication failed");
+            log.info("Authentication failed");
             context.getCauseOfFailure().printStackTrace();
         }
     }

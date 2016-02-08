@@ -1,7 +1,8 @@
-package manager;
+package org.wso2.carbon.identity.user.core.manager;
 
-import common.UserRealmService;
-import stores.UserRole;
+
+import org.wso2.carbon.identity.user.core.common.UserRealmService;
+import org.wso2.carbon.identity.user.core.stores.UserRole;
 
 import java.util.ArrayList;
 
@@ -16,10 +17,10 @@ public class AuthorizationManager extends PersistenceManager {
 
     public boolean isUserAuthorized(String user, String permission) {
 
-        ArrayList<String> roles = UserRealmService.getIdentityManager().getRolesOfUser(user);
+        ArrayList<String> roles = UserRealmService.getInstance().getIdentityManager().getRolesOfUser(user);
 
         for (String role : roles) {
-            UserRole roleObject = UserRealmService.getIdentityManager().getRole(role);
+            UserRole roleObject = UserRealmService.getInstance().getIdentityManager().getRole(role);
             ArrayList<String> permissionList = roleObject.getPermissions();
             for (String permissionCheck : permissionList) {
                 if (permissionCheck.equals(permission)) {

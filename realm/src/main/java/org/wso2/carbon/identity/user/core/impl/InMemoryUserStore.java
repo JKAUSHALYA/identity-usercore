@@ -1,8 +1,9 @@
-package impl;
+package org.wso2.carbon.identity.user.core.impl;
 
-import principal.IdentityObject;
-import stores.AbstractUserStore;
-import stores.UserRole;
+
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
+import org.wso2.carbon.identity.user.core.stores.UserRole;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ public class InMemoryUserStore extends AbstractUserStore {
     protected Map<String, IdentityObject> users;
     protected Map<String, UserRole> roles;
     public InMemoryUserStore() {
-        users = new HashMap<String, IdentityObject>();
+        users = new HashMap<>();
         roles = new HashMap<String, UserRole>();
     }
     @Override
@@ -25,7 +26,7 @@ public class InMemoryUserStore extends AbstractUserStore {
     @Override
     protected IdentityObject retrieveUser(String claimAttribute, String value) {
 
-        if (claimAttribute == "userName") {
+        if ("userName".equalsIgnoreCase(claimAttribute)) {
             return users.get(value);
         }
         //TODO: implement logic to return by other claim values by iterating the valueset of the hashmap
