@@ -19,11 +19,11 @@ package org.wso2.carbon.identity.user.core.inmemory;
 import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreConstants;
 import org.wso2.carbon.identity.user.core.UserStoreException;
-import org.wso2.carbon.identity.user.core.common.UserRealmService;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
 import org.wso2.carbon.identity.user.core.stores.UserRole;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,9 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     protected Map<String, IdentityObject> users;
     protected Map<String, UserRole> roles;
 
-    public InMemoryReadOnlyUserStore() {
+    public InMemoryReadOnlyUserStore() throws UserStoreException{
+
+        super.init(readUserStoreConfig("PRIMARY.properties"));
         users = new HashMap<>();
         roles = new HashMap<String, UserRole>();
 
@@ -61,9 +63,43 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         HashMap<String, UserStore> stores = new HashMap<String, UserStore>();
     }
 
+    public boolean authenticate(String userid, Object credential) throws UserStoreException {
+       return users.get(userid).getPassword().equals(credential);
+    }
+
+    @Override
+    public boolean isExistingUser(String userName) throws UserStoreException {
+        return false;
+    }
+
+    @Override
+    public boolean isExistingRole(String roleName) throws UserStoreException {
+        return false;
+    }
+
+    @Override
+    public String[] getRoleNames() throws UserStoreException {
+        return new String[0];
+    }
+
+    @Override
+    public String[] getRoleListOfUser(String userName) throws UserStoreException {
+        return new String[0];
+    }
+
+    @Override
+    public String[] getUserListOfRole(String roleName) throws UserStoreException {
+        return new String[0];
+    }
+
+    @Override
+    public String[] listUsers(String filter, int maxItemLimit) throws UserStoreException {
+        return new String[0];
+    }
+
     @Override
     public int getExecutionOrder() {
-        return 0;
+        return Integer.getInteger(getUserStoreProperties().getProperty(UserStoreConstants.EXECUTION_ORDER));
     }
 
     @Override
@@ -78,12 +114,12 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     @Override
     public IdentityObject searchUser(String userID) throws UserStoreException {
-        return null;
+        return users.get(userID);
     }
 
     @Override
     public IdentityObject searchUser(String claimAttribute, String value) throws UserStoreException {
-        return null;
+       return retrieveUser(claimAttribute,value);
     }
 
     @Override
@@ -117,7 +153,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     public UserRole searchRole(String roleName) throws UserStoreException {
-        return new UserRole();
+        return roles.get(roleName);
     }
 
     @Override

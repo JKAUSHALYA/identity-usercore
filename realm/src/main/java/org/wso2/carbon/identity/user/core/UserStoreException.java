@@ -10,5 +10,21 @@ public class UserStoreException extends Exception {
     public UserStoreException() {
         super();
     }
+    public UserStoreException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UserStoreException(String message, boolean convertMessage) {
+        super(message);
+    }
+
+
+    public UserStoreException(String message) {
+        super(message);
+    }
+
+    public UserStoreException(Throwable cause) {
+        super(cause);
+    }
 
 }

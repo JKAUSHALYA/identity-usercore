@@ -22,12 +22,15 @@ import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreException;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
-import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
 import org.wso2.carbon.identity.user.core.stores.UserRole;
 import org.wso2.carbon.identity.user.core.util.AuthenticationFailure;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * IdentityManager
@@ -36,13 +39,24 @@ public class IdentityManager implements PersistenceManager {
 
 
     private HashMap<String, UserStore> userStores;
+    private HashMap<String, Properties> userStoreProperties;
     private static final Logger log = LoggerFactory.getLogger(PersistenceManager.class);
 
     public IdentityManager() {
 
     }
 
-    public AuthenticationContext authenticate(Object credential) throws UserStoreException{
+    public void addUserStore(UserStore userStore) throws UserStoreException {
+        if (userStore != null) {
+            userStores.put(userStore.getUserStoreName(), userStore);
+        }
+    }
+
+    public void removeUserStore(String userStoreName) {
+        this.userStores.remove(userStoreName);
+    }
+
+    public AuthenticationContext authenticate(Object credential) throws UserStoreException {
         return null;
     }
 
@@ -51,7 +65,7 @@ public class IdentityManager implements PersistenceManager {
     }
 
 
-    public AuthenticationContext authenticate(String userid, Object credential) throws UserStoreException {
+    public AuthenticationContext authenticate(String userid, Object credential) {
 
         AuthenticationContext context = new AuthenticationContext();
         boolean isAuthenticated = false;
@@ -60,10 +74,12 @@ public class IdentityManager implements PersistenceManager {
 
             if (!(userid.indexOf("/") < 0)) {
                 String userName = userid.substring(userid.indexOf("/") + 1);
-
-                IdentityObject user = userStores.get(userid.substring(0, userid.indexOf("/"))).searchUser
-                        (userName);
-                isAuthenticated = user.getPassword().equals(credential);
+                UserStore userStore = userStores.get(userid.substring(0, userid.indexOf("/")));
+                isAuthenticated = userStore.authenticate(userName,credential);
+                if(!isAuthenticated){
+                    throw new UserStoreException("Error while authenticating against user store");
+                }
+                IdentityObject user = userStore.searchUser(userName);
                 if (isAuthenticated) {
                     context.setSubject(user);
                 }

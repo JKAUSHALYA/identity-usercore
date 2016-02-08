@@ -1,4 +1,3 @@
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -11,7 +10,6 @@ import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.inmemory.InMemoryReadOnlyUserStore;
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
 import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
-
 
 import java.util.HashMap;
 
@@ -49,9 +47,9 @@ public class AppTest extends TestCase {
         AuthorizationManager authzManager = UserRealmService.getInstance().getAuthorizationManager();
         AuthenticationContext context = authManager.authenticate(userName, password);
 
-//        System.out.println("===========================1");
-//        System.out.println(context.isAuthenticated());
-//        System.out.println("===========================2");
-//        System.out.println(authzManager.isUserAuthorized(userName, "/permissions/login"));
+        System.out.println("===========================1");
+        System.out.println(context.isAuthenticated());
+        System.out.println("===========================2");
+        System.out.println(authzManager.isUserAuthorized(userName, "/permissions/login"));
     }
 }

@@ -9,11 +9,21 @@ public interface UserStore {
 
     void init(Properties properties) throws UserStoreException ;
 
+    boolean authenticate(String userid, Object credential) throws UserStoreException;
+
+    boolean isExistingUser(String userName) throws UserStoreException;
+
+    boolean isExistingRole(String roleName) throws UserStoreException;
+
+    String[] getRoleNames() throws UserStoreException;
+
+    String[] getRoleListOfUser(String userName) throws UserStoreException;
+
+    String[] getUserListOfRole(String roleName) throws UserStoreException;
+
+    String[] listUsers(String filter, int maxItemLimit) throws UserStoreException;
+
     int getExecutionOrder();
-
-    boolean addUser(IdentityObject user) throws UserStoreException;
-
-    void persistUser(IdentityObject user) throws UserStoreException;
 
     IdentityObject searchUser(String userID) throws UserStoreException;
 
@@ -22,8 +32,6 @@ public interface UserStore {
     IdentityObject retrieveUser(String claimAttribute, String value) throws UserStoreException;
 
     UserRole retrieveRole(String roleName) throws UserStoreException;
-
-    boolean addRole(UserRole role) throws UserStoreException;
 
     void persistRole(UserRole role) throws UserStoreException;
 
@@ -34,5 +42,11 @@ public interface UserStore {
     String getUserStoreName();
 
     Properties getUserStoreProperties();
+
+    boolean addRole(UserRole role) throws UserStoreException;
+
+    boolean addUser(IdentityObject user) throws UserStoreException;
+
+    void persistUser(IdentityObject user) throws UserStoreException;
 
 }
