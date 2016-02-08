@@ -19,5 +19,5 @@ package org.wso2.carbon.identity.user.core.manager;
 /**
  * PersistenceManager
  */
-public class PersistenceManager {
+public interface PersistenceManager {
 }

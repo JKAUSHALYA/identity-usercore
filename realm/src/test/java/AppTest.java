@@ -3,6 +3,7 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.common.UserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.impl.InMemoryUserStore;
@@ -50,7 +51,7 @@ public class AppTest extends TestCase {
         store.addUser(user);
         store.addRole(role);
 
-        HashMap<String, AbstractUserStore> stores = new HashMap<String, AbstractUserStore>();
+        HashMap<String, UserStore> stores = new HashMap<String, UserStore>();
 
         stores.put("PRIMARY", store);
         UserRealmService.getInstance().getIdentityManager().setUserStores(stores);

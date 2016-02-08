@@ -27,6 +27,7 @@ import java.util.Map;
  * InMemoryUserStore
  */
 public class InMemoryUserStore extends AbstractUserStore {
+
     protected Map<String, IdentityObject> users;
     protected Map<String, UserRole> roles;
 
@@ -36,12 +37,27 @@ public class InMemoryUserStore extends AbstractUserStore {
     }
 
     @Override
-    protected void persistUser(IdentityObject user) {
+    public boolean addUser(IdentityObject user) {
+        return false;
+    }
+
+    @Override
+    public void persistUser(IdentityObject user) {
         users.put(user.getUserName(), user);
     }
 
     @Override
-    protected IdentityObject retrieveUser(String claimAttribute, String value) {
+    public IdentityObject searchUser(String userID) {
+        return null;
+    }
+
+    @Override
+    public IdentityObject searchUser(String claimAttribute, String value) {
+        return null;
+    }
+
+    @Override
+    public IdentityObject retrieveUser(String claimAttribute, String value) {
 
         if ("userName".equalsIgnoreCase(claimAttribute)) {
             return users.get(value);
@@ -51,12 +67,26 @@ public class InMemoryUserStore extends AbstractUserStore {
     }
 
     @Override
-    protected UserRole retrieveRole(String roleName) {
+    public UserRole retrieveRole(String roleName) {
         return roles.get(roleName);
     }
 
     @Override
-    protected void persistRole(UserRole role) {
+    public boolean addRole(UserRole role) {
+        return false;
+    }
+
+    @Override
+    public void persistRole(UserRole role) {
         roles.put(role.getRoleName(), role);
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    public UserRole searchRole(String roleName){
+      return new UserRole();
     }
 }

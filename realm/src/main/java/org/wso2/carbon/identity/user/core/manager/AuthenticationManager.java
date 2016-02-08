@@ -22,7 +22,7 @@ import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 /**
  * AuthenticationManager
  */
-public class AuthenticationManager extends PersistenceManager {
+public class AuthenticationManager implements PersistenceManager {
 
 
     private String authenticatingAttribute = "userName";

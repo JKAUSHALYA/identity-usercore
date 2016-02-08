@@ -19,5 +19,5 @@ package org.wso2.carbon.identity.user.core.manager;
 /**
  * ClaimManager
  */
-public class ClaimManager extends PersistenceManager {
+public class ClaimManager implements PersistenceManager {
 }

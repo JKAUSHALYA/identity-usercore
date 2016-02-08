@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /**
  * AuthorizationManager
  */
-public class AuthorizationManager extends PersistenceManager {
+public class AuthorizationManager implements PersistenceManager {
 
 
     public AuthorizationManager() {

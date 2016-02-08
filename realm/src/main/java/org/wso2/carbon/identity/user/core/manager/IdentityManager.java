@@ -18,6 +18,7 @@ package org.wso2.carbon.identity.user.core.manager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
@@ -30,10 +31,10 @@ import java.util.HashMap;
 /**
  * IdentityManager
  */
-public class IdentityManager extends PersistenceManager {
+public class IdentityManager implements PersistenceManager {
 
 
-    private HashMap<String, AbstractUserStore> userStores;
+    private HashMap<String, UserStore> userStores;
     private static final Logger log = LoggerFactory.getLogger(PersistenceManager.class);
 
     public IdentityManager() {
@@ -67,7 +68,7 @@ public class IdentityManager extends PersistenceManager {
                 }
                 //return user.getPassword().equals(credential);
             } else {
-                for (AbstractUserStore store : userStores.values()) {
+                for (UserStore store : userStores.values()) {
                     if (store.searchUser(userid).getPassword().equals(credential)) {
                         context.setSubject(store.searchUser(userid));
                         isAuthenticated = true;
@@ -94,7 +95,7 @@ public class IdentityManager extends PersistenceManager {
 
                 return user.getUserName();
             } else {
-                for (AbstractUserStore store : userStores.values()) {
+                for (UserStore store : userStores.values()) {
                     try {
                         if (store.searchUser(claimValue) != null) {
                             return store.searchUser(claimValue).getUserName();
@@ -114,7 +115,7 @@ public class IdentityManager extends PersistenceManager {
             if (!(claimValue.indexOf("/") < 0)) {
 
             } else {
-                for (AbstractUserStore store : userStores.values()) {
+                for (UserStore store : userStores.values()) {
                     try {
                         if (store.searchUser(claimValue).getPassword().equals(credential)) {
                             log.debug("User present");
@@ -155,11 +156,11 @@ public class IdentityManager extends PersistenceManager {
                 .indexOf("/") + 1));
     }
 
-    public HashMap<String, AbstractUserStore> getUserStores() {
+    public HashMap<String, UserStore> getUserStores() {
         return userStores;
     }
 
-    public void setUserStores(HashMap<String, AbstractUserStore> userStores) {
+    public void setUserStores(HashMap<String, UserStore> userStores) {
         this.userStores = userStores;
     }
 }
