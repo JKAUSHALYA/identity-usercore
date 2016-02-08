@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreException;
-import org.wso2.carbon.identity.user.core.common.UserRealmService;
+import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.inmemory.InMemoryReadOnlyUserStore;
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
@@ -33,7 +33,6 @@ public class AppTest extends TestCase {
         InMemoryReadOnlyUserStore store = new InMemoryReadOnlyUserStore();
         HashMap<String, UserStore> stores = new HashMap<String, UserStore>();
         stores.put("PRIMARY", store);
-        UserRealmService.getInstance().getIdentityManager().setUserStores(stores);
     }
 
     public void testApp()  throws UserStoreException{
@@ -43,8 +42,8 @@ public class AppTest extends TestCase {
         String userName = "admin";
         String password = "password";
 
-        AuthenticationManager authManager = UserRealmService.getInstance().getAuthenticationManager();
-        AuthorizationManager authzManager = UserRealmService.getInstance().getAuthorizationManager();
+        AuthenticationManager authManager = BasicUserRealmService.getInstance().getAuthenticationManager();
+        AuthorizationManager authzManager = BasicUserRealmService.getInstance().getAuthorizationManager();
         AuthenticationContext context = authManager.authenticate(userName, password);
 
         System.out.println("===========================1");

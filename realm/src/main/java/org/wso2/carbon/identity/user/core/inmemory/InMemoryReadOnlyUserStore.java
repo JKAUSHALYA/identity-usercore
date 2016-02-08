@@ -23,7 +23,6 @@ import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
 import org.wso2.carbon.identity.user.core.stores.UserRole;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

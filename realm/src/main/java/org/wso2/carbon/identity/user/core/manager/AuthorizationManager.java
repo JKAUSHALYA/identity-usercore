@@ -17,7 +17,7 @@
 package org.wso2.carbon.identity.user.core.manager;
 
 import org.wso2.carbon.identity.user.core.UserStoreException;
-import org.wso2.carbon.identity.user.core.common.UserRealmService;
+import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.stores.UserRole;
 
 import java.util.ArrayList;
@@ -33,10 +33,10 @@ public class AuthorizationManager implements PersistenceManager {
 
     public boolean isUserAuthorized(String user, String permission) throws UserStoreException {
 
-        ArrayList<String> roles = UserRealmService.getInstance().getIdentityManager().getRolesOfUser(user);
+        ArrayList<String> roles = BasicUserRealmService.getInstance().getIdentityManager().getRolesOfUser(user);
 
         for (String role : roles) {
-            UserRole roleObject = UserRealmService.getInstance().getIdentityManager().getRole(role);
+            UserRole roleObject = BasicUserRealmService.getInstance().getIdentityManager().getRole(role);
             ArrayList<String> permissionList = roleObject.getPermissions();
             for (String permissionCheck : permissionList) {
                 if (permissionCheck.equals(permission)) {

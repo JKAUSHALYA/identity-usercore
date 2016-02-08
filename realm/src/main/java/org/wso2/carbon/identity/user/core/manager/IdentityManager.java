@@ -25,9 +25,6 @@ import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.UserRole;
 import org.wso2.carbon.identity.user.core.util.AuthenticationFailure;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -38,23 +35,17 @@ import java.util.Properties;
 public class IdentityManager implements PersistenceManager {
 
 
-    private HashMap<String, UserStore> userStores;
-    private HashMap<String, Properties> userStoreProperties;
     private static final Logger log = LoggerFactory.getLogger(PersistenceManager.class);
+    private IdentityStoreManager identityStoreManager = IdentityStoreManager.getInstance();
 
     public IdentityManager() {
 
     }
 
-    public void addUserStore(UserStore userStore) throws UserStoreException {
-        if (userStore != null) {
-            userStores.put(userStore.getUserStoreName(), userStore);
-        }
+    public IdentityStoreManager getIdentityStoreManager() {
+        return identityStoreManager;
     }
 
-    public void removeUserStore(String userStoreName) {
-        this.userStores.remove(userStoreName);
-    }
 
     public AuthenticationContext authenticate(Object credential) throws UserStoreException {
         return null;
@@ -63,7 +54,6 @@ public class IdentityManager implements PersistenceManager {
     public AuthenticationContext authenticate(String userid, char[] password) throws UserStoreException {
         return null;
     }
-
 
     public AuthenticationContext authenticate(String userid, Object credential) {
 
@@ -74,9 +64,9 @@ public class IdentityManager implements PersistenceManager {
 
             if (!(userid.indexOf("/") < 0)) {
                 String userName = userid.substring(userid.indexOf("/") + 1);
-                UserStore userStore = userStores.get(userid.substring(0, userid.indexOf("/")));
-                isAuthenticated = userStore.authenticate(userName,credential);
-                if(!isAuthenticated){
+                UserStore userStore = IdentityStoreManager.getInstance().getUserStore(userid.substring(0, userid.indexOf("/")));
+                isAuthenticated = userStore.authenticate(userName, credential);
+                if (!isAuthenticated) {
                     throw new UserStoreException("Error while authenticating against user store");
                 }
                 IdentityObject user = userStore.searchUser(userName);
@@ -85,12 +75,11 @@ public class IdentityManager implements PersistenceManager {
                 }
                 //return user.getPassword().equals(credential);
             } else {
-                for (UserStore store : userStores.values()) {
+                for (UserStore store : IdentityStoreManager.getInstance().getUserStores().values()) {
                     if (store.searchUser(userid).getPassword().equals(credential)) {
                         context.setSubject(store.searchUser(userid));
                         isAuthenticated = true;
                     }
-
                 }
             }
 
@@ -107,12 +96,12 @@ public class IdentityManager implements PersistenceManager {
             if (!(claimValue.indexOf("/") < 0)) {
                 String userName = claimValue.substring(claimValue.indexOf("/") + 1);
 
-                IdentityObject user = userStores.get(claimValue.substring(0, claimValue.indexOf("/"))).searchUser
-                        (userName);
+                IdentityObject user = IdentityStoreManager.getInstance().getUserStores().get(claimValue.substring(0,
+                        claimValue.indexOf("/"))).searchUser(userName);
 
                 return user.getUserName();
             } else {
-                for (UserStore store : userStores.values()) {
+                for (UserStore store : IdentityStoreManager.getInstance().getUserStores().values()) {
                     try {
                         if (store.searchUser(claimValue) != null) {
                             return store.searchUser(claimValue).getUserName();
@@ -133,7 +122,7 @@ public class IdentityManager implements PersistenceManager {
             if (!(claimValue.indexOf("/") < 0)) {
 
             } else {
-                for (UserStore store : userStores.values()) {
+                for (UserStore store : IdentityStoreManager.getInstance().getUserStores().values()) {
                     try {
                         if (store.searchUser(claimValue).getPassword().equals(credential)) {
                             log.debug("User present");
@@ -165,20 +154,14 @@ public class IdentityManager implements PersistenceManager {
             storeName = username.substring(0, username.indexOf("/"));
             userName = username.substring(username.indexOf("/") + 1);
         }
-        return prependStoreName(storeName, userStores.get(storeName).searchUser("userName", userName)
-                .getMemberOf());
+        return prependStoreName(storeName, IdentityStoreManager.getInstance().getUserStores().get(storeName)
+                .searchUser("userName", userName).getMemberOf());
     }
 
     public UserRole getRole(String roleName) throws UserStoreException {
-        return userStores.get(roleName.substring(0, roleName.indexOf("/"))).searchRole(roleName.substring(roleName
-                .indexOf("/") + 1));
-    }
-
-    public HashMap<String, UserStore> getUserStores() throws UserStoreException {
-        return userStores;
-    }
-
-    public void setUserStores(HashMap<String, UserStore> userStores) throws UserStoreException {
-        this.userStores = userStores;
+        return IdentityStoreManager.getInstance().getUserStores().get(roleName.substring(0, roleName.indexOf("/"))).searchRole
+                (roleName.substring
+                        (roleName
+                                .indexOf("/") + 1));
     }
 }
