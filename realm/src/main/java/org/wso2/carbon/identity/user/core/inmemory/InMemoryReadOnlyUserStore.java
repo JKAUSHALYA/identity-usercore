@@ -107,8 +107,8 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public void persistRole(UserRole role)  throws UserStoreException {
-       throw new UnsupportedOperationException("Cannot persist roles in ReadOnly in-memory user store");
+    public void persistRole(UserRole role) throws UserStoreException {
+        throw new UnsupportedOperationException("Cannot persist roles in ReadOnly in-memory user store");
     }
 
     @Override
@@ -117,11 +117,11 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     public UserRole searchRole(String roleName) throws UserStoreException {
-      return new UserRole();
+        return new UserRole();
     }
 
     @Override
     public String getUserStoreName() {
-       return getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
+        return getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
     }
 }
