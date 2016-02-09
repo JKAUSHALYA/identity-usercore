@@ -45,17 +45,13 @@ public interface UserStore {
 
     UserRole searchRole(String roleName) throws UserStoreException;
 
+    String[] listRoles(String filter, int maxItemLimit);
+
     boolean isExistingRole(String roleName) throws UserStoreException;
 
     String[] getRoleNames() throws UserStoreException;
 
     boolean isReadOnly() throws UserStoreException;
-
-    boolean addRole(UserRole role) throws UserStoreException;
-
-    boolean addUser(IdentityObject user) throws UserStoreException;
-
-    void persistUser(IdentityObject user) throws UserStoreException;
 
     UserStoreConfig getUserStoreConfig();
 

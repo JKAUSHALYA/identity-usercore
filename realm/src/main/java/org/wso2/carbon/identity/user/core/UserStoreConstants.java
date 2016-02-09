@@ -25,4 +25,6 @@ public class UserStoreConstants {
     public static final String READ_ONLY = "readOnly";
 
     public static final String USER_STORE_CLASS = "userStoreClass";
+
+    public static final String PRIMARY = "PRIMARY";
 }

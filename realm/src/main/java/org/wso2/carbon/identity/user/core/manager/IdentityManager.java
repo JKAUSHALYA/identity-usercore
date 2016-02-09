@@ -34,12 +34,12 @@ import java.util.Properties;
  */
 public class IdentityManager implements PersistenceManager {
 
-
     private static final Logger log = LoggerFactory.getLogger(PersistenceManager.class);
+
     private IdentityStoreManager identityStoreManager = IdentityStoreManager.getInstance();
 
     public IdentityStoreManager getIdentityStoreManager() {
-        return identityStoreManager;
+        return this.identityStoreManager;
     }
 
 
@@ -83,6 +83,7 @@ public class IdentityManager implements PersistenceManager {
             context.setAuthenticated(isAuthenticated);
 
         } catch (Exception e) {
+            context.setAuthenticated(false);
             context.setFailure(new AuthenticationFailure(e));
         }
         return context;
@@ -159,4 +160,5 @@ public class IdentityManager implements PersistenceManager {
         return IdentityStoreManager.getInstance().getUserStores().get(roleName.substring(0, roleName.indexOf("/")))
                 .searchRole(roleName.substring(roleName.indexOf("/") + 1));
     }
+
 }

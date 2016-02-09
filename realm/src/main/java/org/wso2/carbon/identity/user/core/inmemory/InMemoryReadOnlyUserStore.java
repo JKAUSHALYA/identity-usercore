@@ -26,7 +26,9 @@ import org.wso2.carbon.identity.user.core.stores.UserRole;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * InMemoryUserStore
@@ -84,12 +86,35 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     @Override
     public String[] getRoleNames() throws UserStoreException {
+        String[] rolesArray = new String[roles.size()];
+        Iterator it = roles.entrySet().iterator();
+        int count = 0;
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            rolesArray[count] = pair.getValue().toString();
+            count ++;
+        }
         return new String[0];
     }
 
     @Override
     public String[] listUsers(String filter, int maxItemLimit) throws UserStoreException {
-        return new String[0];
+        ArrayList<IdentityObject> userList = new ArrayList<IdentityObject>();
+        Iterator it = roles.entrySet().iterator();
+        int count = 0;
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            if (pair.getValue().toString().contains(filter)) {
+                userList.add((IdentityObject) pair.getValue());
+            }
+        }
+
+        String[] userArray = new String[userList.size()];
+
+        for(Object object :userList.toArray()){
+           userArray[count] = ((IdentityObject)object).getUserName();
+        }
+        return userArray;
     }
 
     @Override
@@ -101,16 +126,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     public int getExecutionOrder() {
         return Integer.getInteger(getUserStoreConfig().getUserStoreProperties().getProperty(UserStoreConstants
                 .EXECUTION_ORDER));
-    }
-
-    @Override
-    public boolean addUser(IdentityObject user) throws UserStoreException {
-        throw new UnsupportedOperationException("Cannot add users in ReadOnly in-memory user store");
-    }
-
-    @Override
-    public void persistUser(IdentityObject user) throws UserStoreException {
-        throw new UnsupportedOperationException("Cannot persist users in ReadOnly in-memory user store");
     }
 
     @Override
@@ -136,18 +151,20 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         return roles.get(roleName);
     }
 
-    @Override
-    public boolean addRole(UserRole role) throws UserStoreException {
-        throw new UnsupportedOperationException("Cannot persist addRole in ReadOnly in-memory user store");
-    }
 
     @Override
     public boolean isReadOnly() throws UserStoreException {
-        return true;
+        return Boolean.parseBoolean(getUserStoreConfig().getUserStoreProperties().getProperty(UserStoreConstants
+                .READ_ONLY));
     }
 
     public UserRole searchRole(String roleName) throws UserStoreException {
         return roles.get(roleName);
+    }
+
+    @Override
+    public String[] listRoles(String filter, int maxItemLimit) {
+        return new String[0];
     }
 
     @Override
