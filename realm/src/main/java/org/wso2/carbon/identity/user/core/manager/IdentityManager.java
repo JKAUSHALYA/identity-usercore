@@ -23,7 +23,7 @@ import org.wso2.carbon.identity.user.core.UserStoreException;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.model.UserRole;
-import org.wso2.carbon.identity.user.core.util.AuthenticationFailure;
+import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 
 import java.util.ArrayList;
 

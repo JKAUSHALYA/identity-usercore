@@ -65,9 +65,9 @@ public class IdentityStoreManager {
             } catch (ClassNotFoundException e) {
                 throw new UserStoreException("Error while initializing user store class " + userStoreClass, e);
             } catch (InstantiationException e) {
-                throw new UserStoreException("Error while initializing user store class " + userStoreClass, e);
+                throw new UserStoreException("Error while instantiating user store class " + userStoreClass, e);
             } catch (IllegalAccessException e) {
-                throw new UserStoreException("Error while initializing user store class " + userStoreClass, e);
+                throw new UserStoreException("Error while accessing user store class " + userStoreClass, e);
             }
         }
     }

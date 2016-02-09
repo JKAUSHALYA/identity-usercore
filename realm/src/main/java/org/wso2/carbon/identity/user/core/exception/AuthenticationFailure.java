@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core.util;
+package org.wso2.carbon.identity.user.core.exception;
 
 /**
- * AuthenticationStatus
+ * AuthenticationFailure
  */
-public class AuthenticationStatus {
+public class AuthenticationFailure extends Throwable {
+    private Exception cause;
+
+    public AuthenticationFailure(Exception e) {
+        this.cause = e;
+    }
+
+    @Override
+    public Throwable getCause() {
+        return this.cause;
+    }
 }
