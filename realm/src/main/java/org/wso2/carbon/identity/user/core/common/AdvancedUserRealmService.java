@@ -38,6 +38,7 @@ public class AdvancedUserRealmService implements UserRealmService {
     }
 
     private AdvancedUserRealmService() {
+
         authenticationManager = new AuthenticationManager();
         authorizationManager = new AuthorizationManager();
         identityManager = new IdentityManager();

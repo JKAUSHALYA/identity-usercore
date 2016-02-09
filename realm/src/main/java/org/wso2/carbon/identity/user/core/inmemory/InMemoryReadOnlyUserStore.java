@@ -19,6 +19,7 @@ package org.wso2.carbon.identity.user.core.inmemory;
 import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreConstants;
 import org.wso2.carbon.identity.user.core.UserStoreException;
+import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
 import org.wso2.carbon.identity.user.core.stores.UserRole;
@@ -35,9 +36,8 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     protected Map<String, IdentityObject> users;
     protected Map<String, UserRole> roles;
 
-    public InMemoryReadOnlyUserStore() throws UserStoreException{
+    public InMemoryReadOnlyUserStore() throws UserStoreException {
 
-        super.init(readUserStoreConfig("PRIMARY.properties"));
         users = new HashMap<>();
         roles = new HashMap<String, UserRole>();
 
@@ -63,16 +63,22 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     public boolean authenticate(String userid, Object credential) throws UserStoreException {
-       return users.get(userid).getPassword().equals(credential);
+        return users.get(userid).getPassword().equals(credential);
     }
 
     @Override
     public boolean isExistingUser(String userName) throws UserStoreException {
+        if (users.get(userName) != null) {
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean isExistingRole(String roleName) throws UserStoreException {
+        if (roles.get(roleName) != null) {
+            return true;
+        }
         return false;
     }
 
@@ -82,23 +88,19 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public String[] getRoleListOfUser(String userName) throws UserStoreException {
-        return new String[0];
-    }
-
-    @Override
-    public String[] getUserListOfRole(String roleName) throws UserStoreException {
-        return new String[0];
-    }
-
-    @Override
     public String[] listUsers(String filter, int maxItemLimit) throws UserStoreException {
         return new String[0];
     }
 
     @Override
+    public String[] listUsers(String claimAttribute, String filter, int maxItemLimit) throws UserStoreException {
+        return new String[0];
+    }
+
+    @Override
     public int getExecutionOrder() {
-        return Integer.getInteger(getUserStoreProperties().getProperty(UserStoreConstants.EXECUTION_ORDER));
+        return Integer.getInteger(getUserStoreConfig().getUserStoreProperties().getProperty(UserStoreConstants
+                .EXECUTION_ORDER));
     }
 
     @Override
@@ -118,10 +120,9 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     @Override
     public IdentityObject searchUser(String claimAttribute, String value) throws UserStoreException {
-       return retrieveUser(claimAttribute,value);
+        return retrieveUser(claimAttribute, value);
     }
 
-    @Override
     public IdentityObject retrieveUser(String claimAttribute, String value) throws UserStoreException {
 
         if ("userName".equalsIgnoreCase(claimAttribute)) {
@@ -131,7 +132,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         return null;
     }
 
-    @Override
     public UserRole retrieveRole(String roleName) throws UserStoreException {
         return roles.get(roleName);
     }
@@ -139,11 +139,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     @Override
     public boolean addRole(UserRole role) throws UserStoreException {
         throw new UnsupportedOperationException("Cannot persist addRole in ReadOnly in-memory user store");
-    }
-
-    @Override
-    public void persistRole(UserRole role) throws UserStoreException {
-        throw new UnsupportedOperationException("Cannot persist roles in ReadOnly in-memory user store");
     }
 
     @Override
@@ -157,6 +152,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     @Override
     public String getUserStoreName() {
-        return getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
+        return getUserStoreConfig().getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
     }
 }

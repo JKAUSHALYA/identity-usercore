@@ -22,8 +22,11 @@ import java.util.ArrayList;
  * IdentityObject
  */
 public class IdentityObject {
+
     private Object password;
+
     private String userName;
+
     private ArrayList<String> memberOf;
 
     public IdentityObject() {

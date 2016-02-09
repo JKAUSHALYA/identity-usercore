@@ -38,10 +38,6 @@ public class IdentityManager implements PersistenceManager {
     private static final Logger log = LoggerFactory.getLogger(PersistenceManager.class);
     private IdentityStoreManager identityStoreManager = IdentityStoreManager.getInstance();
 
-    public IdentityManager() {
-
-    }
-
     public IdentityStoreManager getIdentityStoreManager() {
         return identityStoreManager;
     }
@@ -64,7 +60,8 @@ public class IdentityManager implements PersistenceManager {
 
             if (!(userid.indexOf("/") < 0)) {
                 String userName = userid.substring(userid.indexOf("/") + 1);
-                UserStore userStore = IdentityStoreManager.getInstance().getUserStore(userid.substring(0, userid.indexOf("/")));
+                UserStore userStore = IdentityStoreManager.getInstance().getUserStore(userid.substring(0, userid
+                        .indexOf("/")));
                 isAuthenticated = userStore.authenticate(userName, credential);
                 if (!isAuthenticated) {
                     throw new UserStoreException("Error while authenticating against user store");
@@ -159,9 +156,7 @@ public class IdentityManager implements PersistenceManager {
     }
 
     public UserRole getRole(String roleName) throws UserStoreException {
-        return IdentityStoreManager.getInstance().getUserStores().get(roleName.substring(0, roleName.indexOf("/"))).searchRole
-                (roleName.substring
-                        (roleName
-                                .indexOf("/") + 1));
+        return IdentityStoreManager.getInstance().getUserStores().get(roleName.substring(0, roleName.indexOf("/")))
+                .searchRole(roleName.substring(roleName.indexOf("/") + 1));
     }
 }

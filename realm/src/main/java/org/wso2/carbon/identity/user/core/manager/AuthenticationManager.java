@@ -28,7 +28,6 @@ public class AuthenticationManager implements PersistenceManager {
 
     private String authenticatingAttribute = "userName";
 
-
     public AuthenticationManager() {
     }
 

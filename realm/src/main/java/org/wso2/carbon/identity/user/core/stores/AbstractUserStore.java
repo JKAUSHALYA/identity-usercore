@@ -18,6 +18,7 @@ package org.wso2.carbon.identity.user.core.stores;
 
 import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreException;
+import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 import org.wso2.carbon.identity.user.core.manager.PersistenceManager;
 
 import java.io.FileInputStream;
@@ -30,38 +31,17 @@ import java.util.Properties;
  */
 public abstract class AbstractUserStore implements UserStore, PersistenceManager {
 
-    private Properties userStoreProperties;
+    private UserStoreConfig userStoreConfig;
 
-    public void init(Properties properties) throws UserStoreException {
-        if(properties != null){
-            this.userStoreProperties = properties;
-        }else {
-            this.userStoreProperties = new Properties();
+    public void init(UserStoreConfig userStoreConfig) throws UserStoreException {
+        if (userStoreConfig != null) {
+            this.userStoreConfig = userStoreConfig;
+        } else {
+            this.userStoreConfig = new UserStoreConfig();
         }
     }
 
-    protected Properties readUserStoreConfig(String userStoreName) throws UserStoreException {
-        InputStream input = null;
-        Properties prop = new Properties();
-        try {
-            input = new FileInputStream("/media/hasinthaindrajee/204c7dcd-f122-4bc5-9743-f46bcdf78f37/c5/identity-usercore/realm/src/main/resources/PRIMARY.properties");
-            prop.load(input);
-        } catch (IOException e) {
-            throw new UserStoreException("Error while reading configuration file for user store " + userStoreName, e);
-        }finally{
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    System.out.println("Error while closing input stream ");
-                    e.printStackTrace();
-                }
-            }
-        }
-        return prop;
-    }
-    @Override
-    public Properties getUserStoreProperties() {
-        return userStoreProperties;
+    public UserStoreConfig getUserStoreConfig() {
+        return this.userStoreConfig;
     }
 }

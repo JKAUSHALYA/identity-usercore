@@ -27,10 +27,6 @@ import java.util.ArrayList;
  */
 public class AuthorizationManager implements PersistenceManager {
 
-
-    public AuthorizationManager() {
-    }
-
     public boolean isUserAuthorized(String user, String permission) throws UserStoreException {
 
         ArrayList<String> roles = BasicUserRealmService.getInstance().getIdentityManager().getRolesOfUser(user);

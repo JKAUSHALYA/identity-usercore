@@ -23,15 +23,16 @@ import org.wso2.carbon.identity.user.core.util.AuthenticationFailure;
  * AuthenticationContext
  */
 public class AuthenticationContext {
-    private IdentityObject subject;
-    private boolean isAuthenticated;
-    private AuthenticationFailure failure;
 
+    private IdentityObject subject;
+
+    private boolean isAuthenticated;
+
+    private AuthenticationFailure failure;
 
     public IdentityObject getSubject() {
         return subject;
     }
-
 
     public void setAuthenticated(boolean authenticated) {
         this.isAuthenticated = authenticated;
@@ -47,7 +48,6 @@ public class AuthenticationContext {
         }
         return failure;
     }
-
 
     public void setSubject(IdentityObject subject) {
         this.subject = subject;

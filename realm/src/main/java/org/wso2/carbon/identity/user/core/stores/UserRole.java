@@ -24,7 +24,9 @@ import java.util.ArrayList;
 public class UserRole {
 
     private String roleName;
+
     private ArrayList<String> permissions;
+
     private ArrayList<String> members;
 
     public String getRoleName() {
