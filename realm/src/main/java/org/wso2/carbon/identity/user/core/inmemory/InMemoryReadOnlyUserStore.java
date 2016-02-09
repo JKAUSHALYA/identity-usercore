@@ -35,6 +35,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     protected Map<String, IdentityObject> users;
     protected Map<String, UserRole> roles;
+    private Map<String,String> passwords = new HashMap<String, String>();
 
     public InMemoryReadOnlyUserStore() throws UserStoreException {
 
@@ -44,7 +45,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         IdentityObject user = new IdentityObject();
 
         user.setUserName("admin");
-        user.setPassword("password");
+        passwords.put("admin","admin");
         user.addRole("ADMIN");
 
         UserRole role = new UserRole();
@@ -63,7 +64,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     public boolean authenticate(String userid, Object credential) throws UserStoreException {
-        return users.get(userid).getPassword().equals(credential);
+        return passwords.get(users.get(userid)).equals(credential);
     }
 
     @Override

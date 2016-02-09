@@ -71,7 +71,7 @@ public class IdentityManager implements PersistenceManager {
                 //return user.getPassword().equals(credential);
             } else {
                 for (UserStore store : IdentityStoreManager.getInstance().getUserStores().values()) {
-                    if (store.searchUser(userid).getPassword().equals(credential)) {
+                    if (store.authenticate(userid, credential)) {
                         context.setSubject(store.searchUser(userid));
                         isAuthenticated = true;
                     }
@@ -113,15 +113,19 @@ public class IdentityManager implements PersistenceManager {
 
     public AuthenticationContext authenticate(String claimAttribute, String claimValue, Object credential) throws
             UserStoreException {
-        //TODO: create authentication context with user, user store and other information
+        AuthenticationContext context = new AuthenticationContext();
         if (claimAttribute.equals("userName")) {
             if (!(claimValue.indexOf("/") < 0)) {
 
             } else {
                 for (UserStore store : IdentityStoreManager.getInstance().getUserStores().values()) {
                     try {
-                        if (store.searchUser(claimValue).getPassword().equals(credential)) {
+                        IdentityObject user =  store.searchUser(claimValue);
+                        if (user != null && store.authenticate(user.getUserName(), credential)) {
+                            context.setAuthenticated(true);
+                            context.setSubject(user);
                             log.debug("User present");
+                            return context;
                         }
                     } catch (Exception e) {
                         continue;
@@ -129,7 +133,8 @@ public class IdentityManager implements PersistenceManager {
                 }
             }
         }
-        return new AuthenticationContext();
+        context.setFailure(new AuthenticationFailure(new Exception("Could not find user in local userstores")));
+        return context;
     }
 
     private ArrayList<String> prependStoreName(String storeName, ArrayList<String> nameList) throws UserStoreException {

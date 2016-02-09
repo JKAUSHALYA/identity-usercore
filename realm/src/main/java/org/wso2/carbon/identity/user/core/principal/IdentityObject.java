@@ -23,8 +23,6 @@ import java.util.ArrayList;
  */
 public class IdentityObject {
 
-    private Object password;
-
     private String userName;
 
     private ArrayList<String> memberOf;
@@ -39,10 +37,6 @@ public class IdentityObject {
 
     public void setUserName(String name) {
         this.userName = name;
-    }
-
-    public Object getPassword() {
-        return password;
     }
 
     public String getUserName() {
@@ -65,7 +59,4 @@ public class IdentityObject {
         memberOf.add(role);
     }
 
-    public void setPassword(Object password) {
-        this.password = password;
-    }
 }
