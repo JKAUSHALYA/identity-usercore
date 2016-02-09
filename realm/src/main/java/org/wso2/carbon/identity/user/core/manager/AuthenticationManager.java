@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.identity.user.core.manager;
 
-import org.wso2.carbon.identity.user.core.UserStoreException;
+import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 

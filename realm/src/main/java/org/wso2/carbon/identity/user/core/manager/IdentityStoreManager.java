@@ -18,7 +18,7 @@ package org.wso2.carbon.identity.user.core.manager;
 
 import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreConstants;
-import org.wso2.carbon.identity.user.core.UserStoreException;
+import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 
 import java.io.FileInputStream;

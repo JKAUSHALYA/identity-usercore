@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core;
+package org.wso2.carbon.identity.user.core.exception;
 
 public class UserStoreException extends Exception {
 

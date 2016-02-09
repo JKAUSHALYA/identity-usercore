@@ -18,7 +18,7 @@ package org.wso2.carbon.identity.user.core.inmemory;
 
 import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreConstants;
-import org.wso2.carbon.identity.user.core.UserStoreException;
+import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
 import org.wso2.carbon.identity.user.core.model.UserRole;
