@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core.inmemory;
+package org.wso2.carbon.identity.user.core.stores.inmemory;
 
 import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreConstants;
@@ -45,7 +45,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         IdentityObject user = new IdentityObject();
 
         user.setUserName("admin");
-        passwords.put("admin","admin");
+        passwords.put("admin","password");
         user.addRole("ADMIN");
 
         UserRole role = new UserRole();
@@ -64,7 +64,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     public boolean authenticate(String userid, Object credential) throws UserStoreException {
-        return passwords.get(users.get(userid)).equals(credential);
+        return passwords.get(userid).equals(credential);
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
-import org.wso2.carbon.identity.user.core.inmemory.InMemoryReadOnlyUserStore;
+import org.wso2.carbon.identity.user.core.stores.inmemory.InMemoryReadOnlyUserStore;
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
 import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
 
