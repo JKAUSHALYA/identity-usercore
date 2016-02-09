@@ -18,14 +18,19 @@ package org.wso2.carbon.identity.user.core.common;
 
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
 import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
+import org.wso2.carbon.identity.user.core.manager.AuthorizationStoreManager;
 import org.wso2.carbon.identity.user.core.manager.ClaimManager;
 import org.wso2.carbon.identity.user.core.manager.IdentityManager;
+import org.wso2.carbon.identity.user.core.manager.IdentityStoreManager;
+import org.wso2.carbon.identity.user.core.manager.ProfileManager;
 import org.wso2.carbon.identity.user.core.service.UserRealmService;
 
 public class BasicUserRealmService implements UserRealmService {
+
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
+    private IdentityStoreManager identityStoreManager;
 
     private static BasicUserRealmService instance = new BasicUserRealmService();
 
@@ -36,7 +41,8 @@ public class BasicUserRealmService implements UserRealmService {
     private BasicUserRealmService() {
         authenticationManager = new AuthenticationManager();
         authorizationManager = new AuthorizationManager();
-        identityManager = new IdentityManager();
+        identityStoreManager = new IdentityStoreManager();
+        identityManager = new IdentityManager(identityStoreManager);
     }
 
     public AuthenticationManager getAuthenticationManager() {
@@ -53,5 +59,20 @@ public class BasicUserRealmService implements UserRealmService {
 
     public IdentityManager getIdentityManager() {
         return identityManager;
+    }
+
+    @Override
+    public ProfileManager getProfileManager() {
+        throw new UnsupportedOperationException("Profile Manager is not available for basic user realm service");
+    }
+
+    @Override
+    public IdentityStoreManager getIdentityStoreManager() {
+        throw new UnsupportedOperationException("Identity S is not available for basic user realm service");
+    }
+
+    @Override
+    public AuthorizationStoreManager getAuthorizationStoreManager() {
+        return null;
     }
 }

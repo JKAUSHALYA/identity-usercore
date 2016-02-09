@@ -18,8 +18,11 @@ package org.wso2.carbon.identity.user.core.common;
 
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
 import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
+import org.wso2.carbon.identity.user.core.manager.AuthorizationStoreManager;
 import org.wso2.carbon.identity.user.core.manager.ClaimManager;
 import org.wso2.carbon.identity.user.core.manager.IdentityManager;
+import org.wso2.carbon.identity.user.core.manager.IdentityStoreManager;
+import org.wso2.carbon.identity.user.core.manager.ProfileManager;
 import org.wso2.carbon.identity.user.core.service.UserRealmService;
 
 /**
@@ -30,6 +33,9 @@ public class AdvancedUserRealmService implements UserRealmService {
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
+    private IdentityStoreManager identityStoreManager;
+    private ProfileManager profileManager;
+    private AuthorizationStoreManager authorizationStoreManager;
 
     private static AdvancedUserRealmService instance = new AdvancedUserRealmService();
 
@@ -41,7 +47,11 @@ public class AdvancedUserRealmService implements UserRealmService {
 
         authenticationManager = new AuthenticationManager();
         authorizationManager = new AuthorizationManager();
-        identityManager = new IdentityManager();
+        identityStoreManager = new IdentityStoreManager();
+        identityManager = new IdentityManager(identityStoreManager);
+        profileManager = new ProfileManager();
+        authorizationStoreManager = new AuthorizationStoreManager();
+
     }
 
     public AuthenticationManager getAuthenticationManager() {
@@ -58,6 +68,21 @@ public class AdvancedUserRealmService implements UserRealmService {
 
     public IdentityManager getIdentityManager() {
         return identityManager;
+    }
+
+    @Override
+    public ProfileManager getProfileManager() {
+        return profileManager;
+    }
+
+    @Override
+    public IdentityStoreManager getIdentityStoreManager() {
+        return identityStoreManager;
+    }
+
+    @Override
+    public AuthorizationStoreManager getAuthorizationStoreManager() {
+        return authorizationStoreManager;
     }
 
 }

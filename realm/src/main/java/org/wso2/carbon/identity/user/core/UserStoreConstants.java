@@ -27,4 +27,6 @@ public class UserStoreConstants {
     public static final String USER_STORE_CLASS = "userStoreClass";
 
     public static final String PRIMARY = "PRIMARY";
+
+    public static final String USER_STORE_ID = "userStoreID";
 }

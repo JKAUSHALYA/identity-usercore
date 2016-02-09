@@ -33,13 +33,7 @@ public class IdentityStoreManager {
 
     private HashMap<String, UserStore> userStores = new HashMap<String, UserStore>();
 
-    private static IdentityStoreManager identityStoreManager = new IdentityStoreManager();
-
-    public static IdentityStoreManager getInstance() {
-        return identityStoreManager;
-    }
-
-    IdentityStoreManager() {
+    public IdentityStoreManager() {
         try {
             init();
         } catch (UserStoreException e) {
@@ -61,6 +55,7 @@ public class IdentityStoreManager {
             try {
                 clazz = Class.forName(userStoreClass);
                 UserStore userStore = (UserStore) clazz.newInstance();
+                userStore.setUserStoreConfig(userStoreConfig);
                 userStores.put(userStoreName, userStore);
             } catch (ClassNotFoundException e) {
                 throw new UserStoreException("Error while initializing user store class " + userStoreClass, e);
