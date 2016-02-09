@@ -22,12 +22,10 @@ import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreException;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
-import org.wso2.carbon.identity.user.core.stores.UserRole;
+import org.wso2.carbon.identity.user.core.model.UserRole;
 import org.wso2.carbon.identity.user.core.util.AuthenticationFailure;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Properties;
 
 /**
  * IdentityManager

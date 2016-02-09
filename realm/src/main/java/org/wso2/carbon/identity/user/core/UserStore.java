@@ -18,10 +18,7 @@ package org.wso2.carbon.identity.user.core;
 
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
-import org.wso2.carbon.identity.user.core.stores.UserRole;
-
-import java.util.Map;
-import java.util.Properties;
+import org.wso2.carbon.identity.user.core.model.UserRole;
 
 public interface UserStore {
 
