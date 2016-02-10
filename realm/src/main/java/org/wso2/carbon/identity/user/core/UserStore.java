@@ -18,9 +18,12 @@ package org.wso2.carbon.identity.user.core;
 
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.model.UserRole;
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
+/**
+ * User store.
+ */
 public interface UserStore {
 
     int getExecutionOrder();

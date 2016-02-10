@@ -16,12 +16,11 @@
 
 package org.wso2.carbon.identity.user.core.stores.inmemory;
 
-import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreConstants;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
+import org.wso2.carbon.identity.user.core.model.UserRole;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
-import org.wso2.carbon.identity.user.core.model.UserRole;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,32 +34,30 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     protected Map<String, IdentityObject> users;
     protected Map<String, UserRole> roles;
-    private Map<String,String> passwords = new HashMap<String, String>();
+    private Map<String, String> passwords = new HashMap<String, String>();
 
     public InMemoryReadOnlyUserStore() throws UserStoreException {
 
         users = new HashMap<>();
-        roles = new HashMap<String, UserRole>();
+        roles = new HashMap<>();
 
         IdentityObject user = new IdentityObject();
 
         user.setUserName("admin");
-        passwords.put("admin","password");
+        passwords.put("admin", "password");
         user.addRole("ADMIN");
 
         UserRole role = new UserRole();
         role.setRoleName("ADMIN");
-        ArrayList<String> permissions = new ArrayList<String>();
+        ArrayList<String> permissions = new ArrayList<>();
         permissions.add("/permissions/login");
         role.setPermissions(permissions);
-        ArrayList<String> members = new ArrayList<String>();
+        ArrayList<String> members = new ArrayList<>();
         members.add("admin");
         role.setMembers(members);
 
         users.put("admin", user);
         roles.put("ADMIN", role);
-
-        HashMap<String, UserStore> stores = new HashMap<String, UserStore>();
     }
 
     public boolean authenticate(String userid, Object credential) throws UserStoreException {
@@ -85,15 +82,16 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     @Override
     public String[] getRoleNames() throws UserStoreException {
+
         String[] rolesArray = new String[roles.size()];
         Iterator it = roles.entrySet().iterator();
         int count = 0;
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             rolesArray[count] = pair.getValue().toString();
-            count ++;
+            count++;
         }
-        return new String[0];
+        return rolesArray;
     }
 
     @Override
@@ -110,8 +108,8 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
         String[] userArray = new String[userList.size()];
 
-        for(Object object :userList.toArray()){
-           userArray[count] = ((IdentityObject)object).getUserName();
+        for (Object object : userList.toArray()) {
+            userArray[count] = ((IdentityObject) object).getUserName();
         }
         return userArray;
     }

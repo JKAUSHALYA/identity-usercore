@@ -22,7 +22,11 @@ import org.wso2.carbon.identity.user.core.manager.ClaimManager;
 import org.wso2.carbon.identity.user.core.manager.IdentityManager;
 import org.wso2.carbon.identity.user.core.service.UserRealmService;
 
+/**
+ * Basic user realm service.
+ */
 public class BasicUserRealmService implements UserRealmService {
+
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;

@@ -16,25 +16,35 @@
 
 package org.wso2.carbon.identity.user.core.manager;
 
-import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
+import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 
 /**
  * AuthenticationManager
  */
 public class AuthenticationManager implements PersistenceManager {
 
-
     private String authenticatingAttribute = "userName";
 
     public AuthenticationManager() {
     }
 
+    /**
+     * Initialize an authentication manager.
+     * @param claimAttribute claim attribute.
+     */
     public AuthenticationManager(String claimAttribute) {
         this.authenticatingAttribute = claimAttribute;
     }
 
+    /**
+     * Authenticate the user.
+     * @param userId
+     * @param credential
+     * @return @see AuthenticationContext
+     * @throws UserStoreException
+     */
     public AuthenticationContext authenticate(String userId, Object credential) throws UserStoreException {
 
         String userID = BasicUserRealmService.getInstance().getIdentityManager().searchUserFromClaim

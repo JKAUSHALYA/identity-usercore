@@ -16,10 +16,11 @@
 
 package org.wso2.carbon.identity.user.core.manager;
 
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.UserStoreConstants;
-import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
+import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,23 +29,27 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
+/**
+ * Identity store manager.
+ */
 public class IdentityStoreManager {
 
-    private HashMap<String, UserStore> userStores = new HashMap<String, UserStore>();
-
+    private  static org.slf4j.Logger log = LoggerFactory.getLogger(PersistenceManager.class);
     private static IdentityStoreManager identityStoreManager = new IdentityStoreManager();
-
-    public static IdentityStoreManager getInstance() {
-        return identityStoreManager;
-    }
+    private HashMap<String, UserStore> userStores = new HashMap<String, UserStore>();
 
     IdentityStoreManager() {
         try {
             init();
         } catch (UserStoreException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
+    }
+
+    public static IdentityStoreManager getInstance() {
+        return identityStoreManager;
     }
 
     public void addUserStore(UserStoreConfig userStoreConfig) throws UserStoreException {
@@ -103,10 +108,14 @@ public class IdentityStoreManager {
     }
 
     protected Properties readUserStoreConfig(String userStoreName) throws UserStoreException {
+
+        ResourceBundle bundle = ResourceBundle.getBundle("files");
+        String filePath = bundle.getString("filepath");
         InputStream input = null;
         Properties prop = new Properties();
+
         try {
-            input = new FileInputStream("/media/hasinthaindrajee/204c7dcd-f122-4bc5-9743-f46bcdf78f37/c5/identity-usercore/realm/src/main/resources/PRIMARY.properties");
+            input = new FileInputStream(filePath);
             prop.load(input);
         } catch (IOException e) {
             throw new UserStoreException("Error while reading configuration file for user store " + userStoreName, e);
@@ -115,8 +124,7 @@ public class IdentityStoreManager {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    System.out.println("Error while closing input stream ");
-                    e.printStackTrace();
+                    log.error(e.getMessage());
                 }
             }
         }

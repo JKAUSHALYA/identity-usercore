@@ -18,6 +18,9 @@ package org.wso2.carbon.identity.user.core.config;
 
 import java.util.Properties;
 
+/**
+ * User store configurations.
+ */
 public class UserStoreConfig {
 
     private Properties userStoreProperties;

@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.identity.user.core;
 
+/**
+ * User store constants.
+ */
 public class UserStoreConstants {
 
     public static final String USER_STORE_NAME = "userStoreName";

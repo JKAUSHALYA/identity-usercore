@@ -16,8 +16,8 @@
 
 package org.wso2.carbon.identity.user.core.context;
 
-import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
 /**
  * AuthenticationContext

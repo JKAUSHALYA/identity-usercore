@@ -21,6 +21,9 @@ import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
 import org.wso2.carbon.identity.user.core.manager.ClaimManager;
 import org.wso2.carbon.identity.user.core.manager.IdentityManager;
 
+/**
+ * User realm service.
+ */
 public interface UserRealmService {
 
     public AuthenticationManager getAuthenticationManager();

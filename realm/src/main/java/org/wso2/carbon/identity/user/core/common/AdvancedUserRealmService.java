@@ -23,7 +23,7 @@ import org.wso2.carbon.identity.user.core.manager.IdentityManager;
 import org.wso2.carbon.identity.user.core.service.UserRealmService;
 
 /**
- * UserRealmService
+ * Advance user realm service
  */
 public class AdvancedUserRealmService implements UserRealmService {
 

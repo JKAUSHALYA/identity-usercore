@@ -19,13 +19,14 @@ package org.wso2.carbon.identity.user.core.manager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.identity.user.core.UserStore;
-import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
-import org.wso2.carbon.identity.user.core.principal.IdentityObject;
-import org.wso2.carbon.identity.user.core.model.UserRole;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
+import org.wso2.carbon.identity.user.core.exception.UserStoreException;
+import org.wso2.carbon.identity.user.core.model.UserRole;
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
 import java.util.ArrayList;
+
 
 /**
  * IdentityManager
@@ -53,21 +54,19 @@ public class IdentityManager implements PersistenceManager {
 
         AuthenticationContext context = new AuthenticationContext();
         boolean isAuthenticated = false;
-        IdentityObject subject = null;
+
         try {
 
-            if (!(userid.indexOf("/") < 0)) {
+            if (userid.contains("/")) {
                 String userName = userid.substring(userid.indexOf("/") + 1);
-                UserStore userStore = IdentityStoreManager.getInstance().getUserStore(userid.substring(0, userid
-                        .indexOf("/")));
+                UserStore userStore = IdentityStoreManager.getInstance()
+                        .getUserStore(userid.substring(0, userid.indexOf("/")));
                 isAuthenticated = userStore.authenticate(userName, credential);
                 if (!isAuthenticated) {
                     throw new UserStoreException("Error while authenticating against user store");
                 }
                 IdentityObject user = userStore.searchUser(userName);
-                if (isAuthenticated) {
-                    context.setSubject(user);
-                }
+                context.setSubject(user);
                 //return user.getPassword().equals(credential);
             } else {
                 for (UserStore store : IdentityStoreManager.getInstance().getUserStores().values()) {
@@ -128,7 +127,7 @@ public class IdentityManager implements PersistenceManager {
                             return context;
                         }
                     } catch (Exception e) {
-                        continue;
+                        throw new RuntimeException(e);
                     }
                 }
             }

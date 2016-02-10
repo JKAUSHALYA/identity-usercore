@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.identity.user.core.exception;
 
+/**
+ * User store exception.
+ */
 public class UserStoreException extends Exception {
 
     /**
