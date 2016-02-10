@@ -21,6 +21,8 @@ import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.model.UserRole;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
+import java.util.List;
+
 /**
  * User store.
  */
@@ -32,13 +34,15 @@ public interface UserStore {
 
     String getUserStoreName();
 
-    boolean authenticate(String userid, Object credential) throws UserStoreException;
+    int getUserStoreID();
 
-    boolean isExistingUser(String userName) throws UserStoreException;
+    boolean authenticate(String userID, Object credential) throws UserStoreException;
 
-    String[] listUsers(String filter, int maxItemLimit) throws UserStoreException;
+    boolean isExistingUser(String userID) throws UserStoreException;
 
-    String[] listUsers(String claimAttribute, String filter, int maxItemLimit) throws UserStoreException;
+    List<IdentityObject> listUsers(String filter, int maxItemLimit) throws UserStoreException;
+
+    List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit) throws UserStoreException;
 
     IdentityObject searchUser(String userID) throws UserStoreException;
 
@@ -55,5 +59,7 @@ public interface UserStore {
     boolean isReadOnly() throws UserStoreException;
 
     UserStoreConfig getUserStoreConfig();
+
+    void setUserStoreConfig(UserStoreConfig userStoreConfig);
 
 }

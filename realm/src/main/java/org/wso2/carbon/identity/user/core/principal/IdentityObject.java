@@ -16,31 +16,61 @@
 
 package org.wso2.carbon.identity.user.core.principal;
 
+import org.wso2.carbon.identity.user.core.UserStore;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * IdentityObject
  */
 public class IdentityObject {
 
-    private String userName;
+    private UserStore userStore;
+
+    private String userID;
+
+    private int userStoreID;
+
+    private Map<String,String> claims;
+
+    public Map<String, String> getClaims() {
+        return claims;
+    }
+
+    public void setClaims(Map<String, String> claims) {
+        this.claims = claims;
+    }
+
+    public int getUserStoreID() {
+        return userStoreID;
+    }
+
+    public void setUserStoreID(int userStoreID) {
+        this.userStoreID = userStoreID;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public UserStore getUserStore() {
+        return userStore;
+    }
+
+    public void setUserStore(UserStore userStore) {
+        this.userStore = userStore;
+    }
 
     private ArrayList<String> memberOf;
 
-    public IdentityObject() {
+    public IdentityObject(String userID) {
+        this.userID = userID;
         memberOf = new ArrayList<String>();
-    }
-
-    public IdentityObject(String name) {
-        this.userName = name;
-    }
-
-    public void setUserName(String name) {
-        this.userName = name;
-    }
-
-    public String getUserName() {
-        return userName;
     }
 
     public String[] getUserRoles() {
@@ -58,5 +88,7 @@ public class IdentityObject {
     public void addRole(String role) {
         memberOf.add(role);
     }
+
+
 
 }

@@ -38,6 +38,7 @@ public class AuthenticationManager implements PersistenceManager {
         this.authenticatingAttribute = claimAttribute;
     }
 
+    
     /**
      * Authenticate the user.
      * @param userId
@@ -48,7 +49,7 @@ public class AuthenticationManager implements PersistenceManager {
     public AuthenticationContext authenticate(String userId, Object credential) throws UserStoreException {
 
         String userID = BasicUserRealmService.getInstance().getIdentityManager().searchUserFromClaim
-                (authenticatingAttribute, userId);
+                (authenticatingAttribute, userName);
         return BasicUserRealmService.getInstance().getIdentityManager().authenticate(userID, credential);
     }
 

@@ -25,6 +25,7 @@ import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,20 +33,24 @@ import java.util.Map;
  */
 public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
-    protected Map<String, IdentityObject> users;
+    protected Map<String, InMemoryUserStoreUser> users;
     protected Map<String, UserRole> roles;
-    private Map<String, String> passwords = new HashMap<String, String>();
 
     public InMemoryReadOnlyUserStore() throws UserStoreException {
 
         users = new HashMap<>();
         roles = new HashMap<>();
 
-        IdentityObject user = new IdentityObject();
-
-        user.setUserName("admin");
-        passwords.put("admin", "password");
-        user.addRole("ADMIN");
+        InMemoryUserStoreUser user = new InMemoryUserStoreUser();
+        HashMap<String, String> claims = new HashMap<String,String>();
+        List<String> roleList = new ArrayList<String>();
+        claims.put("userName","admin");
+        user.setPassword("password".toCharArray());
+        roleList.add("ADMIN");
+        user.setClaims(claims);
+        user.setRoles(roleList);
+        user.setUserID("12345");
+        users.put("12345",user);
 
         UserRole role = new UserRole();
         role.setRoleName("ADMIN");
@@ -61,7 +66,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     public boolean authenticate(String userid, Object credential) throws UserStoreException {
-        return passwords.get(userid).equals(credential);
+        return String.copyValueOf(users.get(userid).getPassword()).equals(credential);
     }
 
     @Override
@@ -95,7 +100,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public String[] listUsers(String filter, int maxItemLimit) throws UserStoreException {
+    public List<IdentityObject> listUsers(String filter, int maxItemLimit) throws UserStoreException {
         ArrayList<IdentityObject> userList = new ArrayList<IdentityObject>();
         Iterator it = roles.entrySet().iterator();
         int count = 0;
@@ -105,18 +110,12 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
                 userList.add((IdentityObject) pair.getValue());
             }
         }
-
-        String[] userArray = new String[userList.size()];
-
-        for (Object object : userList.toArray()) {
-            userArray[count] = ((IdentityObject) object).getUserName();
-        }
-        return userArray;
+        return userList;
     }
 
     @Override
-    public String[] listUsers(String claimAttribute, String filter, int maxItemLimit) throws UserStoreException {
-        return new String[0];
+    public List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit) throws UserStoreException {
+        return null;
     }
 
     @Override
@@ -127,7 +126,11 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     @Override
     public IdentityObject searchUser(String userID) throws UserStoreException {
-        return users.get(userID);
+        InMemoryUserStoreUser user = users.get(userID);
+        if(user != null){
+            return new IdentityObject(user.getUserID());
+        }
+        throw new UserStoreException("Could not find a user with given userID");
     }
 
     @Override
@@ -137,10 +140,15 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     public IdentityObject retrieveUser(String claimAttribute, String value) throws UserStoreException {
 
-        if ("userName".equalsIgnoreCase(claimAttribute)) {
-            return users.get(value);
+        Iterator it = users.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            InMemoryUserStoreUser inMemoryUserStoreUser = (InMemoryUserStoreUser) pair.getValue();
+            String claimValue = inMemoryUserStoreUser.getClaims().get(claimAttribute);
+            if(claimValue != null && claimValue.equalsIgnoreCase(value)) {
+                return new IdentityObject(inMemoryUserStoreUser.getUserID());
+            }
         }
-        //TODO: implement logic to return by other claim values by iterating the valueset of the hashmap
         return null;
     }
 
@@ -167,5 +175,11 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     @Override
     public String getUserStoreName() {
         return getUserStoreConfig().getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
+    }
+
+    @Override
+    public int getUserStoreID() {
+       return Integer.parseInt(this.getUserStoreConfig().getUserStoreProperties().get(UserStoreConstants
+               .USER_STORE_ID).toString());
     }
 }

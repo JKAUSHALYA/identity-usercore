@@ -18,8 +18,11 @@ package org.wso2.carbon.identity.user.core.service;
 
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
 import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
+import org.wso2.carbon.identity.user.core.manager.AuthorizationStoreManager;
 import org.wso2.carbon.identity.user.core.manager.ClaimManager;
 import org.wso2.carbon.identity.user.core.manager.IdentityManager;
+import org.wso2.carbon.identity.user.core.manager.IdentityStoreManager;
+import org.wso2.carbon.identity.user.core.manager.ProfileManager;
 
 /**
  * User realm service.
@@ -33,4 +36,10 @@ public interface UserRealmService {
     public ClaimManager getClaimManager();
 
     public IdentityManager getIdentityManager();
+
+    public ProfileManager getProfileManager();
+
+    public IdentityStoreManager getIdentityStoreManager();
+
+    public AuthorizationStoreManager getAuthorizationStoreManager();
 }
