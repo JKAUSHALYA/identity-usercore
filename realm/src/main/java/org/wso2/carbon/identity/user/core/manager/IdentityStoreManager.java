@@ -44,7 +44,7 @@ public class IdentityStoreManager {
         try {
             init();
         } catch (UserStoreException e) {
-            log.error(e.getMessage());
+            log.error("Error while initializing identity store manager");
         }
     }
 
@@ -53,7 +53,7 @@ public class IdentityStoreManager {
     }
 
     public void addUserStore(UserStoreConfig userStoreConfig) throws UserStoreException {
-        String userStoreName = userStoreConfig.getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
+        String userStoreID = userStoreConfig.getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_ID);
         String userStoreClass = userStoreConfig.getUserStoreProperties().getProperty(UserStoreConstants
                 .USER_STORE_CLASS);
         int executionOrder = Integer.parseInt(userStoreConfig.getUserStoreProperties().getProperty
@@ -61,13 +61,13 @@ public class IdentityStoreManager {
         if (getUserStore(executionOrder) != null) {
             throw new UserStoreException("Error while adding user store. Execution order duplicated");
         }
-        if (userStoreName != null && userStoreClass != null) {
+        if (userStoreID != null && userStoreClass != null) {
             Class clazz = null;
             try {
                 clazz = Class.forName(userStoreClass);
                 UserStore userStore = (UserStore) clazz.newInstance();
                 userStore.setUserStoreConfig(userStoreConfig);
-                userStores.put(userStoreName, userStore);
+                userStores.put(userStoreID, userStore);
             } catch (ClassNotFoundException e) {
                 throw new UserStoreException("Error while initializing user store class " + userStoreClass, e);
             } catch (InstantiationException e) {
@@ -130,5 +130,9 @@ public class IdentityStoreManager {
             }
         }
         return prop;
+    }
+
+    public UserStore getUserStoreFromID(String userStoreId) {
+        return userStores.get(userStoreId);
     }
 }

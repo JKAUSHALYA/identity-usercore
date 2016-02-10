@@ -18,7 +18,7 @@ package org.wso2.carbon.identity.user.core.stores.inmemory;
 
 import org.wso2.carbon.identity.user.core.UserStoreConstants;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.model.UserRole;
+import org.wso2.carbon.identity.user.core.model.Group;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
 
@@ -34,12 +34,12 @@ import java.util.Map;
 public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     protected Map<String, InMemoryUserStoreUser> users;
-    protected Map<String, UserRole> roles;
+    protected Map<String, InMemoryUserStoreGroup> groups;
 
     public InMemoryReadOnlyUserStore() throws UserStoreException {
 
         users = new HashMap<>();
-        roles = new HashMap<>();
+        groups = new HashMap<>();
 
         InMemoryUserStoreUser user = new InMemoryUserStoreUser();
         HashMap<String, String> claims = new HashMap<String, String>();
@@ -52,17 +52,14 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         user.setUserID("12345");
         users.put("12345", user);
 
-        UserRole role = new UserRole();
-        role.setRoleName("ADMIN");
-        ArrayList<String> permissions = new ArrayList<>();
-        permissions.add("/permissions/login");
-        role.setPermissions(permissions);
-        ArrayList<String> members = new ArrayList<>();
-        members.add("admin");
-        role.setMembers(members);
+        InMemoryUserStoreGroup group = new InMemoryUserStoreGroup();
+        group.setGroupID("12345555555");
+        ArrayList<String> members = new ArrayList<String>();
+        members.add("12345");
+        group.setUsers(members);
 
         users.put("admin", user);
-        roles.put("ADMIN", role);
+        groups.put("ADMIN", group);
     }
 
     public boolean authenticate(String userid, Object credential) throws UserStoreException {
@@ -78,31 +75,19 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public boolean isExistingRole(String roleName) throws UserStoreException {
-        if (roles.get(roleName) != null) {
+    public boolean isExistingRole(String groupName) throws UserStoreException {
+        if (groups.get(groupName) != null) {
             return true;
         }
         return false;
     }
 
     @Override
-    public String[] getRoleNames() throws UserStoreException {
+    public List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit)
+            throws UserStoreException {
 
-        String[] rolesArray = new String[roles.size()];
-        Iterator it = roles.entrySet().iterator();
-        int count = 0;
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            rolesArray[count] = pair.getValue().toString();
-            count++;
-        }
-        return rolesArray;
-    }
-
-    @Override
-    public List<IdentityObject> listUsers(String filter, int maxItemLimit) throws UserStoreException {
         ArrayList<IdentityObject> userList = new ArrayList<IdentityObject>();
-        Iterator it = roles.entrySet().iterator();
+        Iterator it = groups.entrySet().iterator();
         int count = 0;
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
@@ -111,12 +96,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
             }
         }
         return userList;
-    }
-
-    @Override
-    public List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit)
-            throws UserStoreException {
-        return null;
     }
 
     @Override
@@ -139,6 +118,24 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         return retrieveUser(claimAttribute, value);
     }
 
+    @Override
+    public Group searchGroup(String groupID) throws UserStoreException {
+        InMemoryUserStoreGroup inMemoryUserStoreGroup = this.groups.get(groupID);
+        Group group = new Group(inMemoryUserStoreGroup.getGroupID());
+        group.setUserStoreID(this.getUserStoreID());
+        return group;
+    }
+
+    @Override
+    public Group searchGroup(String attribute, String value) {
+        return null;
+    }
+
+    @Override
+    public List<Group> listGroups(String attribute, String filter, int maxItemLimit) {
+        return null;
+    }
+
     public IdentityObject retrieveUser(String claimAttribute, String value) throws UserStoreException {
 
         Iterator it = users.entrySet().iterator();
@@ -153,8 +150,11 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         return null;
     }
 
-    public UserRole retrieveRole(String roleName) throws UserStoreException {
-        return roles.get(roleName);
+    public Group retrieveGroup(String groupName) throws UserStoreException {
+        InMemoryUserStoreGroup inMemoryUserStoreGroup = this.groups.get(groupName);
+        Group group = new Group(inMemoryUserStoreGroup.getGroupID());
+        group.setUserStoreID(this.getUserStoreID());
+        return group;
     }
 
 
@@ -164,23 +164,19 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
                 .READ_ONLY));
     }
 
-    public UserRole searchRole(String roleName) throws UserStoreException {
-        return roles.get(roleName);
-    }
-
-    @Override
-    public String[] listRoles(String filter, int maxItemLimit) {
-        return new String[0];
-    }
-
     @Override
     public String getUserStoreName() {
         return getUserStoreConfig().getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
     }
 
     @Override
-    public int getUserStoreID() {
-        return Integer.parseInt(this.getUserStoreConfig().getUserStoreProperties().get(UserStoreConstants
-                .USER_STORE_ID).toString());
+    public String getUserStoreID() {
+        if (this.getUserStoreConfig().getUserStoreProperties().get(UserStoreConstants
+                .USER_STORE_ID) != null) {
+            return this.getUserStoreConfig().getUserStoreProperties().get(UserStoreConstants
+                    .USER_STORE_ID).toString();
+        } else {
+            return null;
+        }
     }
 }

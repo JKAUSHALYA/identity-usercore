@@ -16,31 +16,25 @@
 
 package org.wso2.carbon.identity.user.core.manager;
 
-import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
-import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.model.UserRole;
-
-import java.util.ArrayList;
-
 /**
  * AuthorizationManager
  */
 public class AuthorizationManager implements PersistenceManager {
 
-    public boolean isUserAuthorized(String user, String permission) throws UserStoreException {
-
-        ArrayList<String> roles = BasicUserRealmService.getInstance().getIdentityManager().getRolesOfUser(user);
-
-        for (String role : roles) {
-            UserRole roleObject = BasicUserRealmService.getInstance().getIdentityManager().getRole(role);
-            ArrayList<String> permissionList = roleObject.getPermissions();
-            for (String permissionCheck : permissionList) {
-                if (permissionCheck.equals(permission)) {
-                    return true;
-                }
-            }
-        }
-
-        return false; // implement code here
-    }
+//    public boolean isUserAuthorized(String user, String permission) throws UserStoreException {
+//
+//        ArrayList<String> groups = BasicUserRealmService.getInstance().getIdentityManager().getRolesOfUser(user);
+//
+//        for (String role : groups) {
+//            UserRole roleObject = BasicUserRealmService.getInstance().getIdentityManager().getRole(role);
+//            ArrayList<String> permissionList = roleObject.getPermissions();
+//            for (String permissionCheck : permissionList) {
+//                if (permissionCheck.equals(permission)) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false; // implement code here
+//    }
 }

@@ -22,10 +22,13 @@ import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.model.UserRole;
+import org.wso2.carbon.identity.user.core.model.Group;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 /**
@@ -123,35 +126,99 @@ public class IdentityManager implements PersistenceManager {
                 }
             }
         }
-        context.setFailure(new AuthenticationFailure(new Exception("Could not find user in local userstores")));
+        context.setFailure(new AuthenticationFailure(new Exception("Could not find user in local user stores")));
         return context;
     }
 
-    private ArrayList<String> prependStoreName(String storeName, ArrayList<String> nameList) throws UserStoreException {
-        ArrayList<String> temp = new ArrayList<String>();
-
-        for (String name : nameList) {
-            temp.add(storeName + "/" + name);
-        }
-
-        return temp;
+    public ArrayList<Group> getGroupsOfUser(String userID) throws UserStoreException {
+        return null;
+        //identityStoreManager.getUserStoreFromID(UserIDManager.getUserStoreID(userID));
     }
 
-    public ArrayList<String> getRolesOfUser(String username) throws UserStoreException {
-        String storeName = "PRIMARY";
-        String userName = username;
-        if (!(username.indexOf("/") < 0)) {
-
-            storeName = username.substring(0, username.indexOf("/"));
-            userName = username.substring(username.indexOf("/") + 1);
-        }
-        return prependStoreName(storeName, identityStoreManager.getUserStores().get(storeName)
-                .searchUser("userName", userName).getMemberOf());
+    public Group getGroup(String groupName) throws UserStoreException {
+        return identityStoreManager.getUserStores().get(groupName.substring(0, groupName.indexOf("/")))
+                .searchGroup(groupName.substring(groupName.indexOf("/") + 1));
     }
 
-    public UserRole getRole(String roleName) throws UserStoreException {
-        return identityStoreManager.getUserStores().get(roleName.substring(0, roleName.indexOf("/")))
-                .searchRole(roleName.substring(roleName.indexOf("/") + 1));
+    private IdentityObject modifyUserID(IdentityObject user) {
+        user.setUserID(user.getUserStoreID() + "--" + user.getUserID());
+        return user;
+    }
+
+    /**
+     * To retrieve user store from user ID
+     *
+     * @param userID
+     * @return
+     * @throws UserStoreException
+     */
+    private UserStore getUserStore(String userID) throws UserStoreException {
+        String storeID = UserIDManager.getUserStoreID(userID);
+        if (userID != null) {
+            UserStore userStore = identityStoreManager.getUserStoreFromID(storeID);
+            if (userStore != null) {
+                UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+                return userStore;
+            } else {
+                throw new UserStoreException("No user store found for the given user store ID");
+            }
+        } else {
+            return null;
+        }
+
+    }
+
+    /**
+     * Returns IdentityObject of the user with given ID,
+     *
+     * @param userID
+     * @return
+     * @throws UserStoreException
+     */
+    public IdentityObject searchUser(String userID) throws UserStoreException {
+        UserStore userStore = getUserStore(userID);
+        IdentityObject user = null;
+
+        if (userStore != null) {
+            user = userStore.searchUser(userID);
+            if (user != null) {
+                user.setUserID(userStore.getUserStoreID());
+                UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+                modifyUserID(user);
+                return user;
+            }
+        }
+
+        user = searchUserInUserStores(userID);
+        if (user != null) {
+            return user;
+        } else {
+            throw new UserStoreException("User does not reside in local user stores");
+        }
+    }
+
+    /**
+     * Iteratively searches user in all user stores and returns user
+     *
+     * @param userID ID of the user.
+     * @return use IdentityObject
+     * @throws UserStoreException
+     */
+    private IdentityObject searchUserInUserStores(String userID) throws UserStoreException {
+
+        HashMap<String, UserStore> userStores = identityStoreManager.getUserStores();
+        IdentityObject user;
+        Iterator it = userStores.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            UserStore userStore = (UserStore) pair.getValue();
+            user = userStore.searchUser(userID);
+            user.setUserStoreID(userStore.getUserStoreID());
+            UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+            modifyUserID(user);
+            return user;
+        }
+        return null;
     }
 
 }
