@@ -30,7 +30,7 @@
                             org.slf4j.*,
                         </Import-Package>
                         <Export-Package>
-                            !org.wso2.carbon.security.internal,
+                            !org.wso2.carbon.identity.user.core.internal,
                             org.wso2.carbon.identity.user.core.*
                         </Export-Package>
                     </instructions>

@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.identity.user.core.principal;
 
-import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.model.Group;
 
 import java.util.ArrayList;
@@ -26,8 +25,6 @@ import java.util.Map;
  * IdentityObject
  */
 public class IdentityObject {
-
-    private UserStore userStore;
 
     private String userID;
 
@@ -63,14 +60,6 @@ public class IdentityObject {
 
     public void setUserID(String userID) {
         this.userID = userID;
-    }
-
-    public UserStore getUserStore() {
-        return userStore;
-    }
-
-    public void setUserStore(UserStore userStore) {
-        this.userStore = userStore;
     }
 
     public String[] getUserRoles() {

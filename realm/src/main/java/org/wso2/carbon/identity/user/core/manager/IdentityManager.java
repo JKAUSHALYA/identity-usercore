@@ -114,25 +114,30 @@ public class IdentityManager implements PersistenceManager {
                 for (UserStore store : identityStoreManager.getUserStores().values()) {
                     try {
                         IdentityObject user = store.searchUser(claimValue);
-                        if (user != null && store.authenticate(user.getUserID(), credential)) {
-                            context.setAuthenticated(true);
-                            context.setSubject(user);
-                            log.debug("User present");
-                            return context;
+                        if (user != null) {
+                            boolean isAuthenticated = store.authenticate(user.getUserID(), credential);
+                            if (isAuthenticated) {
+                                context.setAuthenticated(true);
+                                context.setSubject(user);
+                                log.debug("User authenticated successfully");
+                                return context;
+                            }
                         }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    } catch (UserStoreException e) {
+                        log.debug("Authentication failed for user store " + store.getUserStoreID());
                     }
                 }
             }
         }
+        context.setAuthenticated(false);
         context.setFailure(new AuthenticationFailure(new Exception("Could not find user in local user stores")));
         return context;
     }
 
     public ArrayList<Group> getGroupsOfUser(String userID) throws UserStoreException {
         return null;
-        //identityStoreManager.getUserStoreFromID(UserIDManager.getUserStoreID(userID));
+        //UserStore userStore = identityStoreManager.getUserStoreFromID(UserIDManager.getUserStoreID(userID));
+
     }
 
     public Group getGroup(String groupName) throws UserStoreException {
@@ -143,29 +148,6 @@ public class IdentityManager implements PersistenceManager {
     private IdentityObject modifyUserID(IdentityObject user) {
         user.setUserID(user.getUserStoreID() + "--" + user.getUserID());
         return user;
-    }
-
-    /**
-     * To retrieve user store from user ID
-     *
-     * @param userID
-     * @return
-     * @throws UserStoreException
-     */
-    private UserStore getUserStore(String userID) throws UserStoreException {
-        String storeID = UserIDManager.getUserStoreID(userID);
-        if (userID != null) {
-            UserStore userStore = identityStoreManager.getUserStoreFromID(storeID);
-            if (userStore != null) {
-                UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
-                return userStore;
-            } else {
-                throw new UserStoreException("No user store found for the given user store ID");
-            }
-        } else {
-            return null;
-        }
-
     }
 
     /**
@@ -219,6 +201,29 @@ public class IdentityManager implements PersistenceManager {
             return user;
         }
         return null;
+    }
+
+    /**
+     * To retrieve user store from user ID
+     *
+     * @param userID
+     * @return
+     * @throws UserStoreException
+     */
+    private UserStore getUserStore(String userID) throws UserStoreException {
+        String storeID = UserIDManager.getUserStoreID(userID);
+        if (userID != null) {
+            UserStore userStore = identityStoreManager.getUserStoreFromID(storeID);
+            if (userStore != null) {
+                UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+                return userStore;
+            } else {
+                throw new UserStoreException("No user store found for the given user store ID");
+            }
+        } else {
+            return null;
+        }
+
     }
 
 }

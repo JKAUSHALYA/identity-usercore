@@ -28,20 +28,64 @@ import java.util.List;
  */
 public interface UserStore {
 
-    int getExecutionOrder();
-
+    /**
+     * Initialize user store by passing user store configurations read from files.
+     * @param userStoreConfig UserStoreConfigurations.
+     * @throws UserStoreException
+     */
     void init(UserStoreConfig userStoreConfig) throws UserStoreException;
 
+    /**
+     * Get user store's execution order ID.
+     * @return Execution order ID.`
+     */
+    int getExecutionOrder();
+
+    /**
+     * Get the name of the user store.
+     * @return Name of the user store.
+     */
     String getUserStoreName();
 
+    /**
+     * Get user store ID which is unique for a user store.
+     * @return returns the unique id for the user store
+     */
     String getUserStoreID();
 
+    /**
+     * Authenticate user with unique userID and any type of credentials
+     * @param userID Unique user ID
+     * @param credential Credentials Object
+     * @return Authentication result, true if successfully authenticated, unless false
+     * @throws UserStoreException
+     */
     boolean authenticate(String userID, Object credential) throws UserStoreException;
 
+    /**
+     * Checks whether a with given user id exists in the user store
+     * @param userID Unique user ID
+     * @return True if the user is in user store, False if user is not avalable.
+     * @throws UserStoreException
+     */
     boolean isExistingUser(String userID) throws UserStoreException;
 
+    /**
+     * List all users in User Store.
+     * @param claimAttribute Claim attribute to be searched
+     * @param filter search filter to be applied while searching users
+     * @param maxItemLimit
+     * @return List of Identities which matches the given claim attribute with given filter
+     * @throws UserStoreException
+     */
     List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit) throws UserStoreException;
 
+    /**
+     * Search user from user id
+     * @param userID User Id of the user
+     * @return Identity Object with
+     * @throws UserStoreException
+     */
     IdentityObject searchUser(String userID) throws UserStoreException;
 
     IdentityObject searchUser(String claimAttribute, String value) throws UserStoreException;
