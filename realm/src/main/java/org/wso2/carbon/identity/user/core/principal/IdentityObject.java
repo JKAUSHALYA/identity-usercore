@@ -32,7 +32,13 @@ public class IdentityObject {
 
     private int userStoreID;
 
-    private Map<String,String> claims;
+    private Map<String, String> claims;
+    private ArrayList<String> memberOf;
+
+    public IdentityObject(String userID) {
+        this.userID = userID;
+        memberOf = new ArrayList<String>();
+    }
 
     public Map<String, String> getClaims() {
         return claims;
@@ -66,13 +72,6 @@ public class IdentityObject {
         this.userStore = userStore;
     }
 
-    private ArrayList<String> memberOf;
-
-    public IdentityObject(String userID) {
-        this.userID = userID;
-        memberOf = new ArrayList<String>();
-    }
-
     public String[] getUserRoles() {
         return new String[]{"ADMIN"};
     }
@@ -88,7 +87,4 @@ public class IdentityObject {
     public void addRole(String role) {
         memberOf.add(role);
     }
-
-
-
 }

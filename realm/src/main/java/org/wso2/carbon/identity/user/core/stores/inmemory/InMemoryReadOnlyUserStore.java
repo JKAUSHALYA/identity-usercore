@@ -42,15 +42,15 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         roles = new HashMap<>();
 
         InMemoryUserStoreUser user = new InMemoryUserStoreUser();
-        HashMap<String, String> claims = new HashMap<String,String>();
+        HashMap<String, String> claims = new HashMap<String, String>();
         List<String> roleList = new ArrayList<String>();
-        claims.put("userName","admin");
+        claims.put("userName", "admin");
         user.setPassword("password".toCharArray());
         roleList.add("ADMIN");
         user.setClaims(claims);
         user.setRoles(roleList);
         user.setUserID("12345");
-        users.put("12345",user);
+        users.put("12345", user);
 
         UserRole role = new UserRole();
         role.setRoleName("ADMIN");
@@ -114,7 +114,8 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit) throws UserStoreException {
+    public List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit)
+            throws UserStoreException {
         return null;
     }
 
@@ -127,7 +128,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     @Override
     public IdentityObject searchUser(String userID) throws UserStoreException {
         InMemoryUserStoreUser user = users.get(userID);
-        if(user != null){
+        if (user != null) {
             return new IdentityObject(user.getUserID());
         }
         throw new UserStoreException("Could not find a user with given userID");
@@ -145,7 +146,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
             Map.Entry pair = (Map.Entry) it.next();
             InMemoryUserStoreUser inMemoryUserStoreUser = (InMemoryUserStoreUser) pair.getValue();
             String claimValue = inMemoryUserStoreUser.getClaims().get(claimAttribute);
-            if(claimValue != null && claimValue.equalsIgnoreCase(value)) {
+            if (claimValue != null && claimValue.equalsIgnoreCase(value)) {
                 return new IdentityObject(inMemoryUserStoreUser.getUserID());
             }
         }
@@ -179,7 +180,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     @Override
     public int getUserStoreID() {
-       return Integer.parseInt(this.getUserStoreConfig().getUserStoreProperties().get(UserStoreConstants
-               .USER_STORE_ID).toString());
+        return Integer.parseInt(this.getUserStoreConfig().getUserStoreProperties().get(UserStoreConstants
+                .USER_STORE_ID).toString());
     }
 }

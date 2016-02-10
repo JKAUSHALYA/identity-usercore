@@ -43,5 +43,4 @@ public class AuthorizationManager implements PersistenceManager {
 
         return false; // implement code here
     }
-
 }

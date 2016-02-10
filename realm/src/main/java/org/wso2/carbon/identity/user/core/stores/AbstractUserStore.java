@@ -40,7 +40,7 @@ public abstract class AbstractUserStore implements UserStore, PersistenceManager
         return this.userStoreConfig;
     }
 
-    public void setUserStoreConfig(UserStoreConfig userStoreConfigs){
+    public void setUserStoreConfig(UserStoreConfig userStoreConfigs) {
         this.userStoreConfig = userStoreConfigs;
     }
 }

@@ -37,7 +37,7 @@ public class IdentityManager implements PersistenceManager {
 
     private IdentityStoreManager identityStoreManager;
 
-    public IdentityManager(IdentityStoreManager identityStoreManager){
+    public IdentityManager(IdentityStoreManager identityStoreManager) {
         this.identityStoreManager = identityStoreManager;
     }
 
@@ -110,7 +110,7 @@ public class IdentityManager implements PersistenceManager {
             } else {
                 for (UserStore store : identityStoreManager.getUserStores().values()) {
                     try {
-                        IdentityObject user =  store.searchUser(claimValue);
+                        IdentityObject user = store.searchUser(claimValue);
                         if (user != null && store.authenticate(user.getUserID(), credential)) {
                             context.setAuthenticated(true);
                             context.setSubject(user);
