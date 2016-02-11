@@ -97,26 +97,92 @@ public interface UserStore {
      */
     IdentityObject searchUser(String userID) throws UserStoreException;
 
+    /**
+     * Search user from user attributes.
+     *
+     * @param claimAttribute Claim attribute to be searched.
+     * @param value          value of the attribute to be searched.
+     * @return Identity Object with user.
+     * @throws UserStoreException
+     */
     IdentityObject searchUser(String claimAttribute, String value) throws UserStoreException;
 
+    /**
+     * Retrieve group with given group ID
+     *
+     * @param groupID Unique ID of the group
+     * @return Group with the given GroupID
+     * @throws UserStoreException
+     */
     Group searchGroup(String groupID) throws UserStoreException;
 
+    /**
+     * @param attribute Search  group from a given attribute
+     * @param value     Value of the attribute to be searched
+     * @return Group which matches given attribute
+     * @throws UserStoreException
+     */
     Group searchGroup(String attribute, String value) throws UserStoreException;
 
+    /**
+     * List Groups with given filter for given attribute.
+     *
+     * @param attribute    attribute to be filtered
+     * @param filter       filter to be applied on the attribute value
+     * @param maxItemLimit maximum limit of groups to be returned
+     * @return List of Groups which matches the given filter for given attribute
+     * @throws UserStoreException
+     */
     List<Group> listGroups(String attribute, String filter, int maxItemLimit) throws UserStoreException;
 
+    /**
+     * @param userID Retrieve groups of a given User with unique ID
+     * @return List of Groups which this user is assigned to
+     * @throws UserStoreException
+     */
     List<Group> getGroupsOfUser(String userID) throws UserStoreException;
 
+    /**
+     * Retrieve set of users belongs to a group
+     * @param groupID Unique ID of the group
+     * @return Set of IdentityObjects resides in Group
+     * @throws UserStoreException
+     */
     List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException;
 
+    /**
+     * Retrieve set of claims of the user with the given ID
+     * @param userID ID of the user whose claims are requested
+     * @return Claims map of the user with given ID
+     * @throws UserStoreException
+     */
     Map<String, String> getUserClaimValues(String userID) throws UserStoreException;
 
+    /**
+     * To check whether a given role is existing in the user store
+     * @param roleID Unique ID of the role
+     * @return True if a role with given ID exists, else false
+     * @throws UserStoreException
+     */
     boolean isExistingRole(String roleID) throws UserStoreException;
 
+    /**
+     * To check whether a user store is read only
+     * @return True if the user store is read only, unless returns false
+     * @throws UserStoreException
+     */
     boolean isReadOnly() throws UserStoreException;
 
+    /**
+     * Returns UserStoreConfig which consists of user store configurations.
+     * @return UserStoreConfig which consists of user store configurations
+     */
     UserStoreConfig getUserStoreConfig();
 
+    /**
+     * Set user store configurations
+     * @param userStoreConfig user store configurations.
+     */
     void setUserStoreConfig(UserStoreConfig userStoreConfig);
 
 }
