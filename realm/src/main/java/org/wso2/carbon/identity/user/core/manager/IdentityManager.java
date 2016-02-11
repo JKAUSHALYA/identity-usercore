@@ -84,7 +84,7 @@ public class IdentityManager implements PersistenceManager {
                 UserStore userStore = (UserStore) pair.getValue();
                 IdentityObject user = userStore.searchUser(claimAttribute, claimValue);
                 user.setUserStoreID(userStore.getUserStoreID());
-                UserIDManager.storeUserStoreID(user.getUserID(), userStore.getUserStoreID());
+                UserIDManager.storeUserStoreIDOfUser(user.getUserID(), userStore.getUserStoreID());
                 users.add(user);
             }
         }
@@ -99,9 +99,28 @@ public class IdentityManager implements PersistenceManager {
         throw new UserStoreException("Could not find user in local user stores");
     }
 
-    public Group getGroup(String groupName) throws UserStoreException {
-        return identityStoreManager.getUserStores().get(groupName.substring(0, groupName.indexOf("/")))
-                .searchGroup(groupName.substring(groupName.indexOf("/") + 1));
+    public List<Group> getGroup(String attribute, String value) throws UserStoreException {
+        List<Group> groupList = new ArrayList<Group>();
+        if (value.indexOf("/") < 0) {
+            String userStoreDomain = value.substring(0, value.indexOf("/"));
+            value = value.substring(0, value.indexOf("/"));
+            UserStore userStore = identityStoreManager.getUserStore(userStoreDomain);
+            Group group = userStore.searchGroup(attribute, value);
+            groupList.add(group);
+        } else {
+
+            Map<String, UserStore> userStores = identityStoreManager.getUserStores();
+            Iterator it = userStores.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                UserStore userStore = (UserStore) pair.getValue();
+                Group group = userStore.searchGroup(attribute, value);
+                group.setUserStoreID(userStore.getUserStoreID());
+                UserIDManager.storeUserStoreIDOfGroup(group.getGroupID(), userStore.getUserStoreID());
+                groupList.add(group);
+            }
+        }
+        return groupList;
     }
 
     public List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException {
@@ -128,7 +147,7 @@ public class IdentityManager implements PersistenceManager {
             user = userStore.searchUser(userID);
             if (user != null) {
                 user.setUserID(userStore.getUserStoreID());
-                UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+                UserIDManager.storeUserStoreIDOfUser(userID, userStore.getUserStoreID());
                 return user;
             }
         }
@@ -167,7 +186,7 @@ public class IdentityManager implements PersistenceManager {
             UserStore userStore = (UserStore) pair.getValue();
             user = userStore.searchUser(userID);
             user.setUserStoreID(userStore.getUserStoreID());
-            UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+            UserIDManager.storeUserStoreIDOfUser(userID, userStore.getUserStoreID());
             return user;
         }
         return null;
@@ -181,7 +200,7 @@ public class IdentityManager implements PersistenceManager {
      * @throws UserStoreException
      */
     private UserStore getUserStoreFromMapping(String userID) throws UserStoreException {
-        String storeID = UserIDManager.getUserStoreID(userID);
+        String storeID = UserIDManager.getUserStoreIdOfUser(userID);
         if (userID != null) {
             UserStore userStore = identityStoreManager.getUserStoreFromID(storeID);
             if (userStore != null) {
@@ -199,7 +218,7 @@ public class IdentityManager implements PersistenceManager {
         }
 
         if (userStore != null) {
-            UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+            UserIDManager.storeUserStoreIDOfUser(userID, userStore.getUserStoreID());
             return userStore;
         } else {
             throw new UserStoreException("User couldn't find in the local user stores");
