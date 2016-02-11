@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core;
+package org.wso2.carbon.identity.user.core.stores;
 
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.model.UserRole;
+import org.wso2.carbon.identity.user.core.model.Role;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public interface UserStore {
 
     IdentityObject searchUser(String claimAttribute, String value) throws UserStoreException;
 
-    UserRole searchRole(String roleName) throws UserStoreException;
+    Role searchRole(String roleName) throws UserStoreException;
 
     String[] listRoles(String filter, int maxItemLimit);
 

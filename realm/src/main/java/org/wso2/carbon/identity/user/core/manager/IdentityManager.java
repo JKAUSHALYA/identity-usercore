@@ -18,12 +18,12 @@ package org.wso2.carbon.identity.user.core.manager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.model.UserRole;
+import org.wso2.carbon.identity.user.core.model.Role;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.stores.UserStore;
 
 import java.util.ArrayList;
 
@@ -128,7 +128,8 @@ public class IdentityManager implements PersistenceManager {
     }
 
     private ArrayList<String> prependStoreName(String storeName, ArrayList<String> nameList) throws UserStoreException {
-        ArrayList<String> temp = new ArrayList<String>();
+
+        ArrayList<String> temp = new ArrayList<>();
 
         for (String name : nameList) {
             temp.add(storeName + "/" + name);
@@ -138,18 +139,18 @@ public class IdentityManager implements PersistenceManager {
     }
 
     public ArrayList<String> getRolesOfUser(String username) throws UserStoreException {
-        String storeName = "PRIMARY";
-        String userName = username;
-        if (!(username.indexOf("/") < 0)) {
 
+        String storeName = "PRIMARY";
+
+        if (username.contains("/")) {
             storeName = username.substring(0, username.indexOf("/"));
-            userName = username.substring(username.indexOf("/") + 1);
+            username = username.substring(username.indexOf("/") + 1);
         }
         return prependStoreName(storeName, identityStoreManager.getUserStores().get(storeName)
-                .searchUser("userName", userName).getMemberOf());
+                .searchUser("userName", username).getMemberOf());
     }
 
-    public UserRole getRole(String roleName) throws UserStoreException {
+    public Role getRole(String roleName) throws UserStoreException {
         return identityStoreManager.getUserStores().get(roleName.substring(0, roleName.indexOf("/")))
                 .searchRole(roleName.substring(roleName.indexOf("/") + 1));
     }

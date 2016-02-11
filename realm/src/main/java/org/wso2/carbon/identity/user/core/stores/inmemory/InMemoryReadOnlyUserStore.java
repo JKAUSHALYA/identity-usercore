@@ -16,11 +16,12 @@
 
 package org.wso2.carbon.identity.user.core.stores.inmemory;
 
-import org.wso2.carbon.identity.user.core.UserStoreConstants;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.model.UserRole;
+import org.wso2.carbon.identity.user.core.model.Permission;
+import org.wso2.carbon.identity.user.core.model.Role;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
+import org.wso2.carbon.identity.user.core.stores.UserStoreConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     protected Map<String, InMemoryUserStoreUser> users;
-    protected Map<String, UserRole> roles;
+    protected Map<String, Role> roles;
 
     public InMemoryReadOnlyUserStore() throws UserStoreException {
 
@@ -52,10 +53,10 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         user.setUserID("12345");
         users.put("12345", user);
 
-        UserRole role = new UserRole();
+        Role role = new Role();
         role.setRoleName("ADMIN");
-        ArrayList<String> permissions = new ArrayList<>();
-        permissions.add("/permissions/login");
+        ArrayList<Permission> permissions = new ArrayList<>();
+        permissions.add(new Permission("/permissions/login"));
         role.setPermissions(permissions);
         ArrayList<String> members = new ArrayList<>();
         members.add("admin");
@@ -153,7 +154,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         return null;
     }
 
-    public UserRole retrieveRole(String roleName) throws UserStoreException {
+    public Role retrieveRole(String roleName) throws UserStoreException {
         return roles.get(roleName);
     }
 
@@ -164,7 +165,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
                 .READ_ONLY));
     }
 
-    public UserRole searchRole(String roleName) throws UserStoreException {
+    public Role searchRole(String roleName) throws UserStoreException {
         return roles.get(roleName);
     }
 

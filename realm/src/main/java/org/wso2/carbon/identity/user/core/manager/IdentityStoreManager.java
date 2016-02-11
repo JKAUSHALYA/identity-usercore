@@ -16,11 +16,12 @@
 
 package org.wso2.carbon.identity.user.core.manager;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.identity.user.core.UserStore;
-import org.wso2.carbon.identity.user.core.UserStoreConstants;
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
+import org.wso2.carbon.identity.user.core.stores.UserStore;
+import org.wso2.carbon.identity.user.core.stores.UserStoreConstants;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,7 +37,7 @@ import java.util.ResourceBundle;
  */
 public class IdentityStoreManager {
 
-    private  static org.slf4j.Logger log = LoggerFactory.getLogger(PersistenceManager.class);
+    private  static Logger log = LoggerFactory.getLogger(PersistenceManager.class);
     private static IdentityStoreManager identityStoreManager = new IdentityStoreManager();
     private HashMap<String, UserStore> userStores = new HashMap<String, UserStore>();
 
@@ -53,6 +54,7 @@ public class IdentityStoreManager {
     }
 
     public void addUserStore(UserStoreConfig userStoreConfig) throws UserStoreException {
+
         String userStoreName = userStoreConfig.getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
         String userStoreClass = userStoreConfig.getUserStoreProperties().getProperty(UserStoreConstants
                 .USER_STORE_CLASS);

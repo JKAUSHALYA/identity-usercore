@@ -16,40 +16,20 @@
 
 package org.wso2.carbon.identity.user.core.model;
 
-import java.util.ArrayList;
 
 /**
- * UserRole
+ * Created by jayanga on 2/10/16.
  */
-public class UserRole {
+public class Permission {
 
-    private String roleName;
+    private String permission;
 
-    private ArrayList<String> permissions;
+    public Permission(String permission) {
 
-    private ArrayList<String> members;
-
-    public String getRoleName() {
-        return roleName;
+        this.permission = permission;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public ArrayList<String> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(ArrayList<String> permissions) {
-        this.permissions = permissions;
-    }
-
-    public ArrayList<String> getMembers() {
-        return members;
-    }
-
-    public void setMembers(ArrayList<String> members) {
-        this.members = members;
+    public String getPermissionName() {
+        return this.permission;
     }
 }

@@ -16,8 +16,30 @@
 
 package org.wso2.carbon.identity.user.core.manager;
 
+import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Authorization Store Manager.
  */
 public class AuthorizationStoreManager {
+
+    private Map<String, AuthorizationStore> authorizationStores = new HashMap<>();
+
+    public void addAuthorizationStore(String storeName, AuthorizationStore authorizationStore) {
+
+        authorizationStores.put(storeName, authorizationStore);
+    }
+
+    public Map<String, AuthorizationStore> getAuthorizationStores() {
+
+        return authorizationStores;
+    }
+
+    public AuthorizationStore getAuthorizationStore(String storeName) {
+
+        return authorizationStores.get(storeName);
+    }
 }

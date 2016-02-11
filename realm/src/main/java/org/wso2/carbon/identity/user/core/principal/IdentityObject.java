@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.identity.user.core.principal;
 
-import org.wso2.carbon.identity.user.core.UserStore;
+import org.wso2.carbon.identity.user.core.stores.UserStore;
 
 import java.util.ArrayList;
 import java.util.Map;

@@ -20,12 +20,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
 import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
+import org.wso2.carbon.identity.user.core.model.Permission;
+import org.wso2.carbon.identity.user.core.stores.UserStore;
 import org.wso2.carbon.identity.user.core.stores.inmemory.InMemoryReadOnlyUserStore;
 
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class AppTest {
 
     public static void configure() throws UserStoreException {
         InMemoryReadOnlyUserStore store = new InMemoryReadOnlyUserStore();
-        HashMap<String, UserStore> stores = new HashMap<String, UserStore>();
+        HashMap<String, UserStore> stores = new HashMap<>();
         stores.put("PRIMARY", store);
     }
 
@@ -56,6 +57,6 @@ public class AppTest {
         AuthenticationContext context = authManager.authenticate(userName, password);
 
         Assert.assertTrue(context.isAuthenticated());
-        Assert.assertTrue(authzManager.isUserAuthorized(userName, "/permissions/login"));
+        Assert.assertTrue(authzManager.isUserAuthorized(userName, new Permission("/permissions/login")));
     }
 }
