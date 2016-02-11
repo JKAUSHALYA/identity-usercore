@@ -18,7 +18,6 @@ package org.wso2.carbon.identity.user.core.model;
 
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,8 +32,6 @@ public class Group {
     public Group(String groupID) {
         this.groupID = groupID;
     }
-
-    private List<IdentityObject> users = new ArrayList<IdentityObject>();
 
     public String getGroupID() {
         return groupID;
@@ -53,10 +50,9 @@ public class Group {
     }
 
     public List<IdentityObject> getUsers() {
-        return users;
+        return null;
     }
 
     public void setUsers(List<IdentityObject> users) {
-        this.users = users;
     }
 }

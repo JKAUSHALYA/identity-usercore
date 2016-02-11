@@ -34,12 +34,16 @@ public class AuthenticationContext {
         return subject;
     }
 
-    public void setAuthenticated(boolean authenticated) {
-        this.isAuthenticated = authenticated;
+    public void setSubject(IdentityObject subject) {
+        this.subject = subject;
     }
 
     public boolean isAuthenticated() {
         return isAuthenticated;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        this.isAuthenticated = authenticated;
     }
 
     public AuthenticationFailure getCauseOfFailure() {
@@ -47,10 +51,6 @@ public class AuthenticationContext {
             return null;
         }
         return failure;
-    }
-
-    public void setSubject(IdentityObject subject) {
-        this.subject = subject;
     }
 
     public void setFailure(AuthenticationFailure failure) {

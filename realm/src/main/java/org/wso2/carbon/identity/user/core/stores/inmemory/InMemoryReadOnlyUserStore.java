@@ -92,7 +92,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             if (pair.getValue().toString().contains(filter)) {
-               InMemoryUserStoreUser user = (InMemoryUserStoreUser) pair.getValue();
+                InMemoryUserStoreUser user = (InMemoryUserStoreUser) pair.getValue();
                 userList.add(new IdentityObject(user.getUserID()));
             }
         }
@@ -131,7 +131,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     public Group searchGroup(String attribute, String value) throws UserStoreException {
 
         Iterator it = groups.entrySet().iterator();
-        int count = 0;
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             InMemoryUserStoreGroup group = (InMemoryUserStoreGroup) pair.getValue();
@@ -147,12 +146,23 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
     @Override
     public List<Group> getGroupsOfUser(String userID) throws UserStoreException {
-        return null;
+        List<Group> groupList = new ArrayList<Group>();
+        Iterator it = users.get(userID).getClaims().entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            groupList.add(new Group(pair.getValue().toString()));
+        }
+        return groupList;
     }
 
     @Override
     public List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException {
         return null;
+    }
+
+    @Override
+    public Map<String, String> getUserClaimValues(String userID) throws UserStoreException {
+        return users.get(userID).getClaims();
     }
 
     public IdentityObject retrieveUser(String claimAttribute, String value) throws UserStoreException {

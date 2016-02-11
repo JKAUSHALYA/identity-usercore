@@ -22,6 +22,7 @@ import org.wso2.carbon.identity.user.core.model.Group;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * User store.
@@ -30,6 +31,7 @@ public interface UserStore {
 
     /**
      * Initialize user store by passing user store configurations read from files.
+     *
      * @param userStoreConfig UserStoreConfigurations.
      * @throws UserStoreException
      */
@@ -37,25 +39,29 @@ public interface UserStore {
 
     /**
      * Get user store's execution order ID.
+     *
      * @return Execution order ID.`
      */
     int getExecutionOrder();
 
     /**
      * Get the name of the user store.
+     *
      * @return Name of the user store.
      */
     String getUserStoreName();
 
     /**
      * Get user store ID which is unique for a user store.
+     *
      * @return returns the unique id for the user store
      */
     String getUserStoreID();
 
     /**
      * Authenticate user with unique userID and any type of credentials
-     * @param userID Unique user ID
+     *
+     * @param userID     Unique user ID
      * @param credential Credentials Object
      * @return Authentication result, true if successfully authenticated, unless false
      * @throws UserStoreException
@@ -64,6 +70,7 @@ public interface UserStore {
 
     /**
      * Checks whether a with given user id exists in the user store
+     *
      * @param userID Unique user ID
      * @return True if the user is in user store, False if user is not avalable.
      * @throws UserStoreException
@@ -72,8 +79,9 @@ public interface UserStore {
 
     /**
      * List all users in User Store.
+     *
      * @param claimAttribute Claim attribute to be searched
-     * @param filter search filter to be applied while searching users
+     * @param filter         search filter to be applied while searching users
      * @param maxItemLimit
      * @return List of Identities which matches the given claim attribute with given filter
      * @throws UserStoreException
@@ -82,6 +90,7 @@ public interface UserStore {
 
     /**
      * Search user from user id
+     *
      * @param userID User Id of the user
      * @return Identity Object with
      * @throws UserStoreException
@@ -99,6 +108,8 @@ public interface UserStore {
     List<Group> getGroupsOfUser(String userID) throws UserStoreException;
 
     List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException;
+
+    Map<String, String> getUserClaimValues(String userID) throws UserStoreException;
 
     boolean isExistingRole(String roleID) throws UserStoreException;
 
