@@ -34,6 +34,7 @@ public class BasicUserRealmService implements UserRealmService {
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
     private IdentityStoreManager identityStoreManager;
+    private AuthorizationStoreManager authorizationStoreManager;
 
     private static BasicUserRealmService instance = new BasicUserRealmService();
 
@@ -46,6 +47,7 @@ public class BasicUserRealmService implements UserRealmService {
         authorizationManager = new AuthorizationManager();
         identityStoreManager = new IdentityStoreManager();
         identityManager = new IdentityManager(identityStoreManager);
+        authorizationStoreManager = AuthorizationStoreManager.getInstance();
     }
 
     public AuthenticationManager getAuthenticationManager() {
@@ -76,6 +78,6 @@ public class BasicUserRealmService implements UserRealmService {
 
     @Override
     public AuthorizationStoreManager getAuthorizationStoreManager() {
-        return null;
+        return authorizationStoreManager;
     }
 }

@@ -27,19 +27,25 @@ import java.util.Map;
 public class AuthorizationStoreManager {
 
     private Map<String, AuthorizationStore> authorizationStores = new HashMap<>();
+    private static AuthorizationStoreManager instance = new AuthorizationStoreManager();
+
+    private AuthorizationStoreManager() {
+        super();
+    }
+
+    public static AuthorizationStoreManager getInstance() {
+        return instance;
+    }
 
     public void addAuthorizationStore(String storeName, AuthorizationStore authorizationStore) {
-
         authorizationStores.put(storeName, authorizationStore);
     }
 
     public Map<String, AuthorizationStore> getAuthorizationStores() {
-
         return authorizationStores;
     }
 
     public AuthorizationStore getAuthorizationStore(String storeName) {
-
         return authorizationStores.get(storeName);
     }
 }

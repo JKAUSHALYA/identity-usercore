@@ -16,20 +16,33 @@
 
 package org.wso2.carbon.identity.user.core.model;
 
-
 /**
- * Created by jayanga on 2/10/16.
+ * Permission model.
  */
 public class Permission {
 
-    private String permission;
+    private String permissionString;
 
     public Permission(String permission) {
 
-        this.permission = permission;
+        this.permissionString = permission;
     }
 
-    public String getPermissionName() {
-        return this.permission;
+    public String getPermissionString() {
+
+        return this.permissionString;
+    }
+
+    @Override
+    public boolean equals(Object permission) {
+
+        return permission instanceof Permission && ((Permission) permission).getPermissionString()
+                .equals(this.permissionString);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return this.permissionString.hashCode();
     }
 }

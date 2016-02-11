@@ -50,7 +50,7 @@ public class AdvancedUserRealmService implements UserRealmService {
         identityStoreManager = new IdentityStoreManager();
         identityManager = new IdentityManager(identityStoreManager);
         profileManager = new ProfileManager();
-        authorizationStoreManager = new AuthorizationStoreManager();
+        authorizationStoreManager = AuthorizationStoreManager.getInstance();
     }
 
     public AuthenticationManager getAuthenticationManager() {

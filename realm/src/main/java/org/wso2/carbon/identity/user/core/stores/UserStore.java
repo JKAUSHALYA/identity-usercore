@@ -18,7 +18,6 @@ package org.wso2.carbon.identity.user.core.stores;
 
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.model.Role;
 import org.wso2.carbon.identity.user.core.model.Group;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 

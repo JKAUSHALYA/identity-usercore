@@ -18,6 +18,11 @@ package org.wso2.carbon.identity.user.core.manager;
 
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.model.Permission;
+import org.wso2.carbon.identity.user.core.model.Role;
+import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * AuthorizationManager
@@ -25,6 +30,23 @@ import org.wso2.carbon.identity.user.core.model.Permission;
 public class AuthorizationManager implements PersistenceManager {
 
     public boolean isUserAuthorized(String userId, Permission permission) throws UserStoreException {
-        return true;
+
+        AuthorizationStoreManager authorizationStoreManager = AuthorizationStoreManager.getInstance();
+        Map<String, AuthorizationStore> authorizationStoreList = authorizationStoreManager.getAuthorizationStores();
+
+        for (AuthorizationStore authorizationStore : authorizationStoreList.values()) {
+            List<Role> roles = authorizationStore.getRoles(userId);
+
+            for (Role role : roles) {
+                List<Permission> permissions = role.getPermissions();
+
+                for (Permission rolePermission : permissions) {
+                    if (rolePermission.equals(permission)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

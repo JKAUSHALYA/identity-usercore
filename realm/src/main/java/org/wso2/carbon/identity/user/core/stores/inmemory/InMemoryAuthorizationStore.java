@@ -31,7 +31,7 @@ import java.util.Map;
 public class InMemoryAuthorizationStore implements AuthorizationStore {
 
     private Map<String, List<Role>> userRoles = new HashMap<>();
-    private Map<Role, List<Permission>> rolePermissions = new HashMap<>();
+    private Map<String, List<Permission>> rolePermissions = new HashMap<>();
 
     public InMemoryAuthorizationStore() {
 
@@ -40,9 +40,12 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
         List<Role> roles = Arrays.asList(roleArrya);
         List<Permission> permissions = Arrays.asList(permissionArray);
 
+        roleArrya[0].setPermissions(permissions);
+        roleArrya[1].setPermissions(permissions);
+
         userRoles.put("admin", roles);
-        rolePermissions.put(roleArrya[0], permissions);
-        rolePermissions.put(roleArrya[1], permissions);
+        rolePermissions.put(roleArrya[0].getRoleName(), permissions);
+        rolePermissions.put(roleArrya[1].getRoleName(), permissions);
     }
 
     public List<Role> getRoles(String userId) {
@@ -50,8 +53,8 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
         return userRoles.get(userId);
     }
 
-    public List<Permission> getPermissions(Role role) {
+    public List<Permission> getPermissions(String roleName) {
 
-        return rolePermissions.get(role);
+        return rolePermissions.get(roleName);
     }
 }
