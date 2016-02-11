@@ -29,6 +29,13 @@ import java.util.Map;
  */
 public class AuthorizationManager implements PersistenceManager {
 
+    /**
+     * Checks whether the given user do have the permission.
+     * @param userId User id of the user.
+     * @param permission Permission that needs to check.
+     * @return True if the user has required permission.
+     * @throws UserStoreException
+     */
     public boolean isUserAuthorized(String userId, Permission permission) throws UserStoreException {
 
         AuthorizationStoreManager authorizationStoreManager = AuthorizationStoreManager.getInstance();
@@ -41,6 +48,7 @@ public class AuthorizationManager implements PersistenceManager {
                 List<Permission> permissions = role.getPermissions();
 
                 for (Permission rolePermission : permissions) {
+
                     if (rolePermission.equals(permission)) {
                         return true;
                     }

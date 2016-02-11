@@ -43,7 +43,7 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
         roleArrya[0].setPermissions(permissions);
         roleArrya[1].setPermissions(permissions);
 
-        userRoles.put("admin", roles);
+        userRoles.put("12345", roles);
         rolePermissions.put(roleArrya[0].getRoleName(), permissions);
         rolePermissions.put(roleArrya[1].getRoleName(), permissions);
     }
