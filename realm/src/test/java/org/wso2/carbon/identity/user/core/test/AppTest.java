@@ -53,9 +53,10 @@ public class AppTest {
 
         AuthenticationManager authManager = BasicUserRealmService.getInstance().getAuthenticationManager();
         AuthorizationManager authzManager = BasicUserRealmService.getInstance().getAuthorizationManager();
-        AuthenticationContext context = authManager.authenticate(userName, password);
+        AuthenticationContext context = authManager.authenticate("userName", userName, password);
 
         Assert.assertTrue(context.isAuthenticated());
         // Assert.assertTrue(authzManager.isUserAuthorized(userName, "/permissions/login"));
     }
+
 }

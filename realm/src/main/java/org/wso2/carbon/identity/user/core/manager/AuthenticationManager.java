@@ -18,33 +18,36 @@ package org.wso2.carbon.identity.user.core.manager;
 
 import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
+import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
+import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+
+import java.util.List;
 
 /**
  * AuthenticationManager
  */
 public class AuthenticationManager implements PersistenceManager {
 
-    private String authenticatingAttribute = "userName";
 
-    public AuthenticationManager() {
-    }
-
-    /**
-     * Initialize an authentication manager.
-     *
-     * @param claimAttribute claim attribute.
-     */
-    public AuthenticationManager(String claimAttribute) {
-        this.authenticatingAttribute = claimAttribute;
-    }
-
-    public AuthenticationContext authenticate(String value,  Object credential) throws
+    public AuthenticationContext authenticate(String claimAttribute, String value, Object credential) throws
             UserStoreException {
 
-        String userID = BasicUserRealmService.getInstance().getIdentityManager().searchUserFromClaim
-                (authenticatingAttribute, value);
-        return BasicUserRealmService.getInstance().getIdentityManager().authenticate(userID, credential);
+        List<IdentityObject> users = BasicUserRealmService.getInstance().getIdentityManager().searchUserFromClaim
+                (claimAttribute, value);
+        AuthenticationContext context;
+        for (IdentityObject user : users) {
+            context = BasicUserRealmService.getInstance().getIdentityManager().authenticate(user
+                    .getUserID(), credential);
+            if (context.isAuthenticated()) {
+                return context;
+            }
+        }
+
+        context = new AuthenticationContext();
+        context.setAuthenticated(false);
+        context.setFailure(new AuthenticationFailure(new Exception("Could not authenticate user")));
+        return context;
     }
 
 }
