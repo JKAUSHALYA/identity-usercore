@@ -1,3 +1,10 @@
 language: java
 script: mvn clean install
 jdk: oraclejdk7
+notifications:
+  email:
+    recipients:
+      - jayangak@wso2.com
+      - hasintha@wso2.com
+    on_success: always
+    on_failure: always

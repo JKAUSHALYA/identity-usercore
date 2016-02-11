@@ -18,8 +18,6 @@ package org.wso2.carbon.identity.user.core.test;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
@@ -35,7 +33,6 @@ import org.wso2.carbon.identity.user.core.stores.inmemory.InMemoryAuthorizationS
  */
 public class AppTest {
 
-    private static final Logger log = LoggerFactory.getLogger(AppTest.class);
     private AuthenticationManager authManager = null;
     private AuthorizationManager authzManager = null;
 
