@@ -25,6 +25,7 @@ import org.wso2.carbon.identity.user.core.model.Group;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.UserStore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,27 +67,28 @@ public class IdentityManager implements PersistenceManager {
         return context;
     }
 
-    public String searchUserFromClaim(String claimAttribute, String claimValue) throws UserStoreException {
+    public List<IdentityObject> searchUserFromClaim(String claimAttribute, String claimValue) throws
+            UserStoreException {
+        List<IdentityObject> users = new ArrayList<IdentityObject>();
+        String userStoreDomain = "";
         if (!(claimValue.indexOf("/") < 0)) {
-            String userName = claimValue.substring(claimValue.indexOf("/") + 1);
-
-            IdentityObject user = identityStoreManager.getUserStores().get(claimValue.substring(0,
-                    claimValue.indexOf("/"))).searchUser(userName);
-
-            return user.getClaims().get(claimAttribute);
+            userStoreDomain = claimValue.substring(0, claimValue.indexOf("/"));
+            claimValue = claimValue.substring(1, claimValue.indexOf("/"));
+            UserStore userStore = identityStoreManager.getUserStore(userStoreDomain);
+            users.add(userStore.searchUser(claimAttribute, claimValue));
         } else {
-            for (UserStore store : identityStoreManager.getUserStores().values()) {
-                try {
-                    if (store.searchUser(claimAttribute, claimValue) != null) {
-                        return store.searchUser(claimAttribute, claimValue).getUserID();
-                    }
-                } catch (Exception e) {
-                    continue;
-                }
+            Map<String, UserStore> userStores = identityStoreManager.getUserStores();
+            Iterator it = userStores.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                UserStore userStore = (UserStore) pair.getValue();
+                IdentityObject user = userStore.searchUser(claimAttribute, claimValue);
+                user.setUserStoreID(userStore.getUserStoreID());
+                UserIDManager.storeUserStoreIDOfUser(user.getUserID(), userStore.getUserStoreID());
+                users.add(user);
             }
         }
-
-        return null;
+        return users;
     }
 
     public List<Group> getGroupsOfUser(String userID) throws UserStoreException {
@@ -97,13 +99,36 @@ public class IdentityManager implements PersistenceManager {
         throw new UserStoreException("Could not find user in local user stores");
     }
 
-    public Group getGroup(String groupName) throws UserStoreException {
-        return identityStoreManager.getUserStores().get(groupName.substring(0, groupName.indexOf("/")))
-                .searchGroup(groupName.substring(groupName.indexOf("/") + 1));
+    public List<Group> getGroup(String attribute, String value) throws UserStoreException {
+        List<Group> groupList = new ArrayList<Group>();
+        if (value.indexOf("/") < 0) {
+            String userStoreDomain = value.substring(0, value.indexOf("/"));
+            value = value.substring(0, value.indexOf("/"));
+            UserStore userStore = identityStoreManager.getUserStore(userStoreDomain);
+            Group group = userStore.searchGroup(attribute, value);
+            groupList.add(group);
+        } else {
+
+            Map<String, UserStore> userStores = identityStoreManager.getUserStores();
+            Iterator it = userStores.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                UserStore userStore = (UserStore) pair.getValue();
+                Group group = userStore.searchGroup(attribute, value);
+                group.setUserStoreID(userStore.getUserStoreID());
+                UserIDManager.storeUserStoreIDOfGroup(group.getGroupID(), userStore.getUserStoreID());
+                groupList.add(group);
+            }
+        }
+        return groupList;
     }
 
-    public List<IdentityObject> getUsersOfGroup(String groupID) {
-        return null;
+    public List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException {
+        UserStore userStore = getUserStoreOfUser(groupID);
+        if (userStore != null) {
+            return userStore.getUsersOfGroup(groupID);
+        }
+        throw new UserStoreException("Couldn't find user in local user store");
     }
 
 
@@ -122,7 +147,7 @@ public class IdentityManager implements PersistenceManager {
             user = userStore.searchUser(userID);
             if (user != null) {
                 user.setUserID(userStore.getUserStoreID());
-                UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+                UserIDManager.storeUserStoreIDOfUser(userID, userStore.getUserStoreID());
                 return user;
             }
         }
@@ -161,7 +186,7 @@ public class IdentityManager implements PersistenceManager {
             UserStore userStore = (UserStore) pair.getValue();
             user = userStore.searchUser(userID);
             user.setUserStoreID(userStore.getUserStoreID());
-            UserIDManager.storeUserStoreID(userID, userStore.getUserStoreID());
+            UserIDManager.storeUserStoreIDOfUser(userID, userStore.getUserStoreID());
             return user;
         }
         return null;
@@ -175,7 +200,7 @@ public class IdentityManager implements PersistenceManager {
      * @throws UserStoreException
      */
     private UserStore getUserStoreFromMapping(String userID) throws UserStoreException {
-        String storeID = UserIDManager.getUserStoreID(userID);
+        String storeID = UserIDManager.getUserStoreIdOfUser(userID);
         if (userID != null) {
             UserStore userStore = identityStoreManager.getUserStoreFromID(storeID);
             if (userStore != null) {
@@ -193,9 +218,10 @@ public class IdentityManager implements PersistenceManager {
         }
 
         if (userStore != null) {
+            UserIDManager.storeUserStoreIDOfUser(userID, userStore.getUserStoreID());
             return userStore;
         } else {
-            throw new UserStoreException("User couldnt find in the local user stores");
+            throw new UserStoreException("User couldn't find in the local user stores");
         }
     }
 

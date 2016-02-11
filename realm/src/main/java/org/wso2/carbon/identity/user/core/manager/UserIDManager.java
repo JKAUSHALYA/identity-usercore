@@ -17,19 +17,29 @@
 package org.wso2.carbon.identity.user.core.manager;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * UserIDManager
  */
 public class UserIDManager {
 
-    private static HashMap<String, String> userIdMap = new HashMap<>();
+    private static Map<String, String> userIdMap = new HashMap<String, String>();
+    private static Map<String, String> groupIdMap = new HashMap<String, String>();
 
-    public static String getUserStoreID(String userID) {
+    public static String getUserStoreIdOfUser(String userID) {
         return userIdMap.get(userID);
     }
 
-    public static void storeUserStoreID(String userID, String userStoreID) {
+    public static void storeUserStoreIDOfUser(String userID, String userStoreID) {
         userIdMap.put(userID, userStoreID);
+    }
+
+    public static String getUserStoreIdOfGroup(String groupID) {
+        return groupIdMap.get(groupID);
+    }
+
+    public static void storeUserStoreIDOfGroup(String groupID, String userStoreID) {
+        groupIdMap.put(groupID, userStoreID);
     }
 }

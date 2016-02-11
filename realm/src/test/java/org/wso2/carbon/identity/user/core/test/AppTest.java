@@ -56,7 +56,7 @@ public class AppTest {
         String userName = "admin";
         String password = "password";
 
-        AuthenticationContext context = authManager.authenticate(userName, password);
+        AuthenticationContext context = authManager.authenticate("userName", userName, password);
         String userId = context.getSubject().getUserID();
 
         Assert.assertTrue(context.isAuthenticated());
