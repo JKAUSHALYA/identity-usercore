@@ -16,9 +16,11 @@
 
 package org.wso2.carbon.identity.user.core.principal;
 
+import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
+import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.model.Group;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,20 +32,12 @@ public class IdentityObject {
 
     private String userStoreID;
 
-    private Map<String, String> claims;
-    private ArrayList<Group> groups;
-
     public IdentityObject(String userID) {
         this.userID = userID;
-        groups = new ArrayList<Group>();
     }
 
-    public Map<String, String> getClaims() {
-        return claims;
-    }
-
-    public void setClaims(Map<String, String> claims) {
-        this.claims = claims;
+    public Map<String, String> getClaims() throws UserStoreException {
+        return BasicUserRealmService.getInstance().getIdentityManager().getUserClaimValues(this.userID);
     }
 
     public String getUserStoreID() {
@@ -62,19 +56,15 @@ public class IdentityObject {
         this.userID = userID;
     }
 
-    public String[] getUserRoles() {
-        return new String[]{"ADMIN"};
+    public List<Group> getUserGroups() throws UserStoreException {
+        return BasicUserRealmService.getInstance().getIdentityManager().getGroupsOfUser(this.userID);
     }
 
-    public ArrayList<Group> getMemberOf() {
-        return groups;
-    }
-
-    public void setMemberOf(ArrayList<Group> groups) {
-        this.groups = groups;
+    public void setClaims(Map<String, String> claims) {
+        //TODO: Implement write operations
     }
 
     public void addGroup(Group group) {
-        this.groups.add(group);
+        //TODO: Implement write operations
     }
 }

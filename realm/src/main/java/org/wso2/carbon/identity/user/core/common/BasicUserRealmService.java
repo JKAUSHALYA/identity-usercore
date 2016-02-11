@@ -30,22 +30,21 @@ import org.wso2.carbon.identity.user.core.service.UserRealmService;
  */
 public class BasicUserRealmService implements UserRealmService {
 
+    private static BasicUserRealmService instance = new BasicUserRealmService();
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
     private IdentityStoreManager identityStoreManager;
-
-    private static BasicUserRealmService instance = new BasicUserRealmService();
-
-    public static UserRealmService getInstance() {
-        return instance;
-    }
 
     private BasicUserRealmService() {
         authenticationManager = new AuthenticationManager();
         authorizationManager = new AuthorizationManager();
         identityStoreManager = new IdentityStoreManager();
         identityManager = new IdentityManager(identityStoreManager);
+    }
+
+    public static UserRealmService getInstance() {
+        return instance;
     }
 
     public AuthenticationManager getAuthenticationManager() {

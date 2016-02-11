@@ -30,18 +30,13 @@ import org.wso2.carbon.identity.user.core.service.UserRealmService;
  */
 public class AdvancedUserRealmService implements UserRealmService {
 
+    private static AdvancedUserRealmService instance = new AdvancedUserRealmService();
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
     private IdentityManager identityManager;
     private IdentityStoreManager identityStoreManager;
     private ProfileManager profileManager;
     private AuthorizationStoreManager authorizationStoreManager;
-
-    private static AdvancedUserRealmService instance = new AdvancedUserRealmService();
-
-    public static AdvancedUserRealmService getInstance() {
-        return instance;
-    }
 
     private AdvancedUserRealmService() {
 
@@ -51,6 +46,10 @@ public class AdvancedUserRealmService implements UserRealmService {
         identityManager = new IdentityManager(identityStoreManager);
         profileManager = new ProfileManager();
         authorizationStoreManager = new AuthorizationStoreManager();
+    }
+
+    public static AdvancedUserRealmService getInstance() {
+        return instance;
     }
 
     public AuthenticationManager getAuthenticationManager() {

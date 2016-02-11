@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
  */
 public class IdentityStoreManager {
 
-    private  static org.slf4j.Logger log = LoggerFactory.getLogger(PersistenceManager.class);
+    private static org.slf4j.Logger log = LoggerFactory.getLogger(PersistenceManager.class);
     private static IdentityStoreManager identityStoreManager = new IdentityStoreManager();
     private HashMap<String, UserStore> userStores = new HashMap<String, UserStore>();
 
