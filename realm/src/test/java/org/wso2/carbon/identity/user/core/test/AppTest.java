@@ -20,15 +20,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.identity.user.core.UserStore;
 import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
 import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
-import org.wso2.carbon.identity.user.core.stores.inmemory.InMemoryReadOnlyUserStore;
-
-import java.util.HashMap;
+import org.wso2.carbon.identity.user.core.manager.AuthorizationStoreManager;
+import org.wso2.carbon.identity.user.core.model.Permission;
+import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
+import org.wso2.carbon.identity.user.core.stores.inmemory.InMemoryAuthorizationStore;
 
 /**
  * Main test class.
@@ -36,11 +36,16 @@ import java.util.HashMap;
 public class AppTest {
 
     private static final Logger log = LoggerFactory.getLogger(AppTest.class);
+    private AuthenticationManager authManager = null;
+    private AuthorizationManager authzManager = null;
 
-    public static void configure() throws UserStoreException {
-        InMemoryReadOnlyUserStore store = new InMemoryReadOnlyUserStore();
-        HashMap<String, UserStore> stores = new HashMap<String, UserStore>();
-        stores.put("PRIMARY", store);
+    public void configure() throws UserStoreException {
+
+        authManager = BasicUserRealmService.getInstance().getAuthenticationManager();
+        authzManager = BasicUserRealmService.getInstance().getAuthorizationManager();
+
+        AuthorizationStore authorizationStore = new InMemoryAuthorizationStore();
+        AuthorizationStoreManager.getInstance().addAuthorizationStore("PRIMARY", authorizationStore);
     }
 
     @Test
@@ -51,12 +56,9 @@ public class AppTest {
         String userName = "admin";
         String password = "password";
 
-        AuthenticationManager authManager = BasicUserRealmService.getInstance().getAuthenticationManager();
-        AuthorizationManager authzManager = BasicUserRealmService.getInstance().getAuthorizationManager();
-        AuthenticationContext context = authManager.authenticate("userName", userName, password);
+        AuthenticationContext context = authManager.authenticate(userName, password);
 
         Assert.assertTrue(context.isAuthenticated());
-        // Assert.assertTrue(authzManager.isUserAuthorized(userName, "/permissions/login"));
+        Assert.assertTrue(authzManager.isUserAuthorized(userName, new Permission("/permissions/login")));
     }
-
 }

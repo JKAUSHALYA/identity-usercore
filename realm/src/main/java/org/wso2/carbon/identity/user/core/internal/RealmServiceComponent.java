@@ -27,7 +27,7 @@ import org.wso2.carbon.identity.user.core.service.UserRealmService;
  * OSGI Component which handles the Identity Management.
  */
 @Component(
-        name = "org.wso2.carbon.security.internal.CarbonSecurityProvider",
+        name = "org.wso2.carbon.identity.user.core.internal.RealmServiceComponent",
         immediate = true
 )
 public class RealmServiceComponent {

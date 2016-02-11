@@ -14,22 +14,35 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core;
+package org.wso2.carbon.identity.user.core.model;
 
 /**
- * User store constants.
+ * Permission model.
  */
-public class UserStoreConstants {
+public class Permission {
 
-    public static final String USER_STORE_NAME = "userStoreName";
+    private String permissionString;
 
-    public static final String EXECUTION_ORDER = "executionOrder";
+    public Permission(String permission) {
 
-    public static final String READ_ONLY = "readOnly";
+        this.permissionString = permission;
+    }
 
-    public static final String USER_STORE_CLASS = "userStoreClass";
+    public String getPermissionString() {
 
-    public static final String PRIMARY = "PRIMARY";
+        return this.permissionString;
+    }
 
-    public static final String USER_STORE_ID = "userStoreID";
+    @Override
+    public boolean equals(Object permission) {
+
+        return permission instanceof Permission && ((Permission) permission).getPermissionString()
+                .equals(this.permissionString);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return this.permissionString.hashCode();
+    }
 }

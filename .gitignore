@@ -6,4 +6,5 @@ target
 *.iml
 *.iws
 *.ipr
+/realm/src/main/resources/files.properties
 .idea

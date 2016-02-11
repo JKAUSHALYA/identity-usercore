@@ -17,17 +17,26 @@
 package org.wso2.carbon.identity.user.core.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * UserRole
+ * Role
  */
-public class UserRole {
+public class Role {
 
     private String roleName;
 
-    private ArrayList<String> permissions;
+    private List<Permission> permissions;
 
-    private ArrayList<String> members;
+    private List<String> members;
+
+    public Role(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Role() {
+        super();
+    }
 
     public String getRoleName() {
         return roleName;
@@ -37,15 +46,15 @@ public class UserRole {
         this.roleName = roleName;
     }
 
-    public ArrayList<String> getPermissions() {
+    public List<Permission> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(ArrayList<String> permissions) {
+    public void setPermissions(List<Permission> permissions) {
         this.permissions = permissions;
     }
 
-    public ArrayList<String> getMembers() {
+    public List<String> getMembers() {
         return members;
     }
 

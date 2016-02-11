@@ -16,11 +16,11 @@
 
 package org.wso2.carbon.identity.user.core.stores.inmemory;
 
-import org.wso2.carbon.identity.user.core.UserStoreConstants;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.model.Group;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
+import org.wso2.carbon.identity.user.core.stores.UserStoreConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

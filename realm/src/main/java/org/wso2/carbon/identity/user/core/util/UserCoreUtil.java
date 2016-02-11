@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.identity.user.core.util;
 
-import org.wso2.carbon.identity.user.core.UserStoreConstants;
+import org.wso2.carbon.identity.user.core.stores.UserStoreConstants;
 
 /**
  * User core utils.
