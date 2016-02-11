@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.identity.user.core.principal;
 
-import org.wso2.carbon.identity.user.core.stores.UserStore;
+import org.wso2.carbon.identity.user.core.model.Group;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -26,18 +26,16 @@ import java.util.Map;
  */
 public class IdentityObject {
 
-    private UserStore userStore;
-
     private String userID;
 
-    private int userStoreID;
+    private String userStoreID;
 
     private Map<String, String> claims;
-    private ArrayList<String> memberOf;
+    private ArrayList<Group> groups;
 
     public IdentityObject(String userID) {
         this.userID = userID;
-        memberOf = new ArrayList<String>();
+        groups = new ArrayList<Group>();
     }
 
     public Map<String, String> getClaims() {
@@ -48,11 +46,11 @@ public class IdentityObject {
         this.claims = claims;
     }
 
-    public int getUserStoreID() {
+    public String getUserStoreID() {
         return userStoreID;
     }
 
-    public void setUserStoreID(int userStoreID) {
+    public void setUserStoreID(String userStoreID) {
         this.userStoreID = userStoreID;
     }
 
@@ -64,27 +62,19 @@ public class IdentityObject {
         this.userID = userID;
     }
 
-    public UserStore getUserStore() {
-        return userStore;
-    }
-
-    public void setUserStore(UserStore userStore) {
-        this.userStore = userStore;
-    }
-
     public String[] getUserRoles() {
         return new String[]{"ADMIN"};
     }
 
-    public ArrayList<String> getMemberOf() {
-        return memberOf;
+    public ArrayList<Group> getMemberOf() {
+        return groups;
     }
 
-    public void setMemberOf(ArrayList<String> memberOf) {
-        this.memberOf = memberOf;
+    public void setMemberOf(ArrayList<Group> groups) {
+        this.groups = groups;
     }
 
-    public void addRole(String role) {
-        memberOf.add(role);
+    public void addGroup(Group group) {
+        this.groups.add(group);
     }
 }

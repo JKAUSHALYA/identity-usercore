@@ -27,14 +27,14 @@ public class InMemoryUserStoreUser {
     private String userID = null;
     private Map<String, String> claims = null;
     private char[] password = null;
-    private List<String> roles = null;
+    private List<String> groups = null;
 
-    public List<String> getRoles() {
-        return roles;
+    public List<String> getGroups() {
+        return groups;
     }
 
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
     }
 
     public Map<String, String> getClaims() {

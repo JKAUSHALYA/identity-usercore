@@ -32,15 +32,17 @@ public class AuthenticationManager implements PersistenceManager {
 
     /**
      * Initialize an authentication manager.
+     *
      * @param claimAttribute claim attribute.
      */
     public AuthenticationManager(String claimAttribute) {
         this.authenticatingAttribute = claimAttribute;
     }
 
-    
+
     /**
      * Authenticate the user.
+     *
      * @param userId
      * @param credential
      * @return @see AuthenticationContext
