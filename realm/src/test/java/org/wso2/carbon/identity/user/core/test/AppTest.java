@@ -57,8 +57,9 @@ public class AppTest {
         String password = "password";
 
         AuthenticationContext context = authManager.authenticate("userName", userName, password);
+        String userId = context.getSubject().getUserID();
 
         Assert.assertTrue(context.isAuthenticated());
-        Assert.assertTrue(authzManager.isUserAuthorized(userName, new Permission("/permissions/login")));
+        Assert.assertTrue(authzManager.isUserAuthorized(userId, new Permission("/permissions/login")));
     }
 }
