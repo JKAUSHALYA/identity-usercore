@@ -43,12 +43,12 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
 
         InMemoryUserStoreUser user = new InMemoryUserStoreUser();
         HashMap<String, String> claims = new HashMap<String, String>();
-        List<String> roleList = new ArrayList<String>();
+        List<String> groupList = new ArrayList<String>();
         claims.put("userName", "admin");
         user.setPassword("password".toCharArray());
-        roleList.add("ADMIN");
+        groupList.add("ADMIN");
         user.setClaims(claims);
-        user.setRoles(roleList);
+        user.setGroups(groupList);
         user.setUserID("12345");
         users.put("12345", user);
 
@@ -87,12 +87,13 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
             throws UserStoreException {
 
         ArrayList<IdentityObject> userList = new ArrayList<IdentityObject>();
-        Iterator it = groups.entrySet().iterator();
+        Iterator it = users.entrySet().iterator();
         int count = 0;
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             if (pair.getValue().toString().contains(filter)) {
-                userList.add((IdentityObject) pair.getValue());
+               InMemoryUserStoreUser user = (InMemoryUserStoreUser) pair.getValue();
+                userList.add(new IdentityObject(user.getUserID()));
             }
         }
         return userList;
@@ -127,12 +128,30 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public Group searchGroup(String attribute, String value) {
+    public Group searchGroup(String attribute, String value) throws UserStoreException {
+
+        Iterator it = groups.entrySet().iterator();
+        int count = 0;
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            InMemoryUserStoreGroup group = (InMemoryUserStoreGroup) pair.getValue();
+            return new Group(group.getGroupID());
+        }
         return null;
     }
 
     @Override
-    public List<Group> listGroups(String attribute, String filter, int maxItemLimit) {
+    public List<Group> listGroups(String attribute, String filter, int maxItemLimit) throws UserStoreException {
+        return null;
+    }
+
+    @Override
+    public List<Group> getGroupsOfUser(String userID) throws UserStoreException {
+        return null;
+    }
+
+    @Override
+    public List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException {
         return null;
     }
 

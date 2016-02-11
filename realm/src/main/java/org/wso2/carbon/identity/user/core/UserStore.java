@@ -92,9 +92,13 @@ public interface UserStore {
 
     Group searchGroup(String groupID) throws UserStoreException;
 
-    Group searchGroup(String attribute, String value);
+    Group searchGroup(String attribute, String value) throws UserStoreException;
 
-    List<Group> listGroups(String attribute, String filter, int maxItemLimit);
+    List<Group> listGroups(String attribute, String filter, int maxItemLimit) throws UserStoreException;
+
+    List<Group> getGroupsOfUser(String userID) throws UserStoreException;
+
+    List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException;
 
     boolean isExistingRole(String roleID) throws UserStoreException;
 

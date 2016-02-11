@@ -25,9 +25,9 @@ import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.model.Group;
 import org.wso2.carbon.identity.user.core.principal.IdentityObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 
@@ -134,10 +134,17 @@ public class IdentityManager implements PersistenceManager {
         return context;
     }
 
-    public ArrayList<Group> getGroupsOfUser(String userID) throws UserStoreException {
-        return null;
-        //UserStore userStore = identityStoreManager.getUserStoreFromID(UserIDManager.getUserStoreID(userID));
+    public List<Group> getGroupsOfUser(String userID) throws UserStoreException {
+        UserStore userStore = getUserStoreFromMapping(userID);
+        if (userStore == null) {
+            userStore = identityStoreManager.getUserStore(searchUserInUserStores(userID).getUserStoreID());
 
+        }
+        if (userStore != null) {
+            return userStore.getGroupsOfUser(userID);
+        }
+
+        throw new UserStoreException("Could not find user in local user stores");
     }
 
     public Group getGroup(String groupName) throws UserStoreException {
@@ -158,7 +165,7 @@ public class IdentityManager implements PersistenceManager {
      * @throws UserStoreException
      */
     public IdentityObject searchUser(String userID) throws UserStoreException {
-        UserStore userStore = getUserStore(userID);
+        UserStore userStore = getUserStoreFromMapping(userID);
         IdentityObject user = null;
 
         if (userStore != null) {
@@ -210,7 +217,7 @@ public class IdentityManager implements PersistenceManager {
      * @return
      * @throws UserStoreException
      */
-    private UserStore getUserStore(String userID) throws UserStoreException {
+    private UserStore getUserStoreFromMapping(String userID) throws UserStoreException {
         String storeID = UserIDManager.getUserStoreID(userID);
         if (userID != null) {
             UserStore userStore = identityStoreManager.getUserStoreFromID(storeID);
