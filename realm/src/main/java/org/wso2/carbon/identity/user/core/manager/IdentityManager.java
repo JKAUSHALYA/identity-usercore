@@ -155,13 +155,9 @@ public class IdentityManager implements PersistenceManager {
                 return user;
             }
         }
-
         user = searchUserInUserStores(userID);
-        if (user != null) {
-            return user;
-        } else {
-            throw new UserStoreException("User does not reside in local user stores");
-        }
+        return user;
+
     }
 
     public Map<String, String> getUserClaimValues(String userID) throws UserStoreException {
@@ -236,6 +232,19 @@ public class IdentityManager implements PersistenceManager {
         }
         UserStore userStore = identityStoreManager.getUserStoreFromID(userStoreID);
         return userStore.addUser(claims, credential, groupList, true);
+    }
+
+    public void deleteUser(String userID) throws UserStoreException {
+        UserStore userStore = getUserStoreOfUser(userID);
+        userStore.deleteUser(userID);
+    }
+
+    public boolean isExistingUser(String userID) throws UserStoreException {
+        if (searchUser(userID) != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
