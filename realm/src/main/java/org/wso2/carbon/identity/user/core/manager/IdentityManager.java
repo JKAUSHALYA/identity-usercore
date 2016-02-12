@@ -75,7 +75,9 @@ public class IdentityManager implements PersistenceManager {
             userStoreDomain = claimValue.substring(0, claimValue.indexOf("/"));
             claimValue = claimValue.substring(1, claimValue.indexOf("/"));
             UserStore userStore = identityStoreManager.getUserStore(userStoreDomain);
-            users.add(userStore.searchUser(claimAttribute, claimValue));
+            if (userStore != null) {
+                users.add(userStore.searchUser(claimAttribute, claimValue));
+            }
         } else {
             Map<String, UserStore> userStores = identityStoreManager.getUserStores();
             Iterator it = userStores.entrySet().iterator();
@@ -83,9 +85,11 @@ public class IdentityManager implements PersistenceManager {
                 Map.Entry pair = (Map.Entry) it.next();
                 UserStore userStore = (UserStore) pair.getValue();
                 IdentityObject user = userStore.searchUser(claimAttribute, claimValue);
-                user.setUserStoreID(userStore.getUserStoreID());
-                UserIDManager.storeUserStoreIDOfUser(user.getUserID(), userStore.getUserStoreID());
-                users.add(user);
+                if (user != null) {
+                    user.setUserStoreID(userStore.getUserStoreID());
+                    UserIDManager.storeUserStoreIDOfUser(user.getUserID(), userStore.getUserStoreID());
+                    users.add(user);
+                }
             }
         }
         return users;
@@ -225,5 +229,13 @@ public class IdentityManager implements PersistenceManager {
         }
     }
 
+    public IdentityObject addUser(String userStoreID, Map<String, String> claims, Object credential, List<String>
+            groupList, boolean requirePasswordChange) throws UserStoreException {
+        if (userStoreID == null) {
+            userStoreID = "1";
+        }
+        UserStore userStore = identityStoreManager.getUserStoreFromID(userStoreID);
+        return userStore.addUser(claims, credential, groupList, true);
+    }
 
 }

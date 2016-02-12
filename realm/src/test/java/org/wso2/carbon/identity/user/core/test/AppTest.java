@@ -28,6 +28,10 @@ import org.wso2.carbon.identity.user.core.model.Permission;
 import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
 import org.wso2.carbon.identity.user.core.stores.inmemory.InMemoryAuthorizationStore;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Main test class.
  */
@@ -45,10 +49,22 @@ public class AppTest {
         AuthorizationStoreManager.getInstance().addAuthorizationStore("PRIMARY", authorizationStore);
     }
 
+    private void addUser() {
+        Map<String, String> userClaims = new HashMap<>();
+        userClaims.put("userName", "admin");
+        try {
+            BasicUserRealmService.getInstance().getIdentityManager().addUser(null, userClaims, "password".toCharArray()
+                    , new ArrayList<String>(), true);
+        } catch (UserStoreException e) {
+            Assert.fail();
+        }
+    }
+
     @Test
     public void testApp() throws UserStoreException {
 
         configure();
+        addUser();
 
         String userName = "admin";
         String password = "password";

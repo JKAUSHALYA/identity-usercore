@@ -191,7 +191,7 @@ public interface UserStore {
      */
     void setUserStoreConfig(UserStoreConfig userStoreConfig);
 
-    IdentityObject addUser(Map<String, String> claims, Object credential, String[] roleList, boolean
+    IdentityObject addUser(Map<String, String> claims, Object credential, List<String> groupList, boolean
             requirePasswordChange) throws UserStoreException;
 
     void updateCredential(String userID, Object newCredential, Object oldCredential)

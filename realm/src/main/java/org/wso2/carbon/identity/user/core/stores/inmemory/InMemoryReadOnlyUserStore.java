@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * InMemoryUserStore
@@ -41,24 +42,22 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         users = new HashMap<>();
         groups = new HashMap<>();
 
-        InMemoryUserStoreUser user = new InMemoryUserStoreUser();
-        HashMap<String, String> claims = new HashMap<String, String>();
-        List<String> groupList = new ArrayList<String>();
-        claims.put("userName", "admin");
-        user.setPassword("password".toCharArray());
-        groupList.add("ADMIN");
-        user.setClaims(claims);
-        user.setGroups(groupList);
-        user.setUserID("12345");
-        users.put("12345", user);
+//        InMemoryUserStoreUser user = new InMemoryUserStoreUser();
+//        HashMap<String, String> claims = new HashMap<String, String>();
+//        List<String> groupList = new ArrayList<String>();
+//        claims.put("userName", "admin");
+//        user.setPassword("password".toCharArray());
+//        groupList.add("ADMIN");
+//        user.setClaims(claims);
+//        user.setGroups(groupList);
+//        user.setUserID("12345");
+       // users.put("12345", user);
 
         InMemoryUserStoreGroup group = new InMemoryUserStoreGroup();
         group.setGroupID("12345555555");
         ArrayList<String> members = new ArrayList<String>();
         members.add("12345");
         group.setUsers(members);
-
-        users.put("admin", user);
         groups.put("ADMIN", group);
     }
 
@@ -205,49 +204,104 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public IdentityObject addUser(Map<String, String> claims, Object credential, String[] roleList, boolean
+    public IdentityObject addUser(Map<String, String> claims, Object credential, List<String> groupList, boolean
             requirePasswordChange) throws UserStoreException {
-        return null;
+        UUID userID = UUID.randomUUID();
+        InMemoryUserStoreUser user = new InMemoryUserStoreUser();
+        user.setUserID(userID.toString());
+        user.setGroups(groupList);
+        user.setPassword((char[]) credential);
+        user.setClaims(claims);
+        this.users.put(user.getUserID() , user);
+        return new IdentityObject(userID.toString());
     }
 
     @Override
     public void updateCredential(String userID, Object newCredential, Object oldCredential) throws UserStoreException {
-
+        boolean isAuthenticated = this.authenticate(userID, oldCredential);
+        if (isAuthenticated) {
+            InMemoryUserStoreUser user = users.get(userID);
+            if (user != null) {
+                user.setPassword((char[]) newCredential);
+            } else {
+                throw new UserStoreException("Couldn't find user inside user store");
+            }
+        } else {
+            throw new UserStoreException("Could not authenticate using old credentials");
+        }
     }
 
     @Override
     public void updateCredentialByAdmin(String userID, Object newCredential) throws UserStoreException {
 
+        InMemoryUserStoreUser user = users.get(userID);
+        if (user != null) {
+            user.setPassword((char[]) newCredential);
+        } else {
+            throw new UserStoreException("Couldn't find user inside user store");
+        }
     }
 
     @Override
     public void deleteUser(String userID) throws UserStoreException {
-
+        InMemoryUserStoreUser user = users.get(userID);
+        if (user != null) {
+            users.remove(userID);
+        } else {
+            throw new UserStoreException("Couldn't find user inside user store");
+        }
     }
 
     @Override
-    public void deleteGroup(String roleName) throws UserStoreException {
-
+    public void deleteGroup(String groupID) throws UserStoreException {
+        InMemoryUserStoreGroup group = groups.get(groupID);
+        if (group != null) {
+            groups.remove(groupID);
+        } else {
+            throw new UserStoreException("No group found with the given group ID");
+        }
     }
 
     @Override
     public void setUserClaimValue(String userID, String claimURI, String claimValue) throws UserStoreException {
-
+        InMemoryUserStoreUser user = users.get(userID);
+        if (user != null) {
+            user.getClaims().put(claimURI, claimValue);
+        } else {
+            throw new UserStoreException("Couldn't find user inside user store");
+        }
     }
 
     @Override
     public void setUserClaimValues(String userID, Map<String, String> claims) throws UserStoreException {
-
+        InMemoryUserStoreUser user = users.get(userID);
+        if (user != null) {
+            user.setClaims(claims);
+        } else {
+            throw new UserStoreException("Couldn't find user inside user store");
+        }
     }
 
     @Override
     public void deleteUserClaimValue(String userID, String claimURI) throws UserStoreException {
-
+        InMemoryUserStoreUser user = users.get(userID);
+        if (user != null) {
+            user.getClaims().remove(claimURI);
+        } else {
+            throw new UserStoreException("Couldn't find user inside user store");
+        }
     }
 
     @Override
     public void deleteUserClaimValues(String userID, String[] claims, String profileName) throws UserStoreException {
-
+        InMemoryUserStoreUser user = users.get(userID);
+        if (user != null) {
+            for (String claim : claims) {
+                user.getClaims().remove(claim);
+            }
+        } else {
+            throw new UserStoreException("Couldn't find user inside user store");
+        }
     }
 
     @Override
