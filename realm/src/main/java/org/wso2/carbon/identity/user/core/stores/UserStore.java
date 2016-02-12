@@ -144,6 +144,7 @@ public interface UserStore {
 
     /**
      * Retrieve set of users belongs to a group
+     *
      * @param groupID Unique ID of the group
      * @return Set of IdentityObjects resides in Group
      * @throws UserStoreException
@@ -152,6 +153,7 @@ public interface UserStore {
 
     /**
      * Retrieve set of claims of the user with the given ID
+     *
      * @param userID ID of the user whose claims are requested
      * @return Claims map of the user with given ID
      * @throws UserStoreException
@@ -160,6 +162,7 @@ public interface UserStore {
 
     /**
      * To check whether a given role is existing in the user store
+     *
      * @param roleID Unique ID of the role
      * @return True if a role with given ID exists, else false
      * @throws UserStoreException
@@ -168,6 +171,7 @@ public interface UserStore {
 
     /**
      * To check whether a user store is read only
+     *
      * @return True if the user store is read only, unless returns false
      * @throws UserStoreException
      */
@@ -175,14 +179,36 @@ public interface UserStore {
 
     /**
      * Returns UserStoreConfig which consists of user store configurations.
+     *
      * @return UserStoreConfig which consists of user store configurations
      */
     UserStoreConfig getUserStoreConfig();
 
     /**
      * Set user store configurations
+     *
      * @param userStoreConfig user store configurations.
      */
     void setUserStoreConfig(UserStoreConfig userStoreConfig);
+
+    IdentityObject addUser(Map<String, String> claims, Object credential, String[] roleList, boolean
+            requirePasswordChange) throws UserStoreException;
+
+    void updateCredential(String userID, Object newCredential, Object oldCredential)
+            throws UserStoreException;
+
+    void updateCredentialByAdmin(String userID, Object newCredential) throws UserStoreException;
+
+    void deleteUser(String userID) throws UserStoreException;
+
+    void deleteGroup(String roleName) throws UserStoreException;
+
+    void setUserClaimValue(String userID, String claimURI, String claimValue) throws UserStoreException;
+
+    void setUserClaimValues(String userID, Map<String, String> claims) throws UserStoreException;
+
+    void deleteUserClaimValue(String userID, String claimURI) throws UserStoreException;
+
+    void deleteUserClaimValues(String userID, String[] claims, String profileName) throws UserStoreException;
 
 }

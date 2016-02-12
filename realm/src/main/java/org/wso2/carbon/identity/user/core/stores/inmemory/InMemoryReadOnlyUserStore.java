@@ -194,11 +194,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public String getUserStoreName() {
-        return getUserStoreConfig().getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
-    }
-
-    @Override
     public String getUserStoreID() {
         if (this.getUserStoreConfig().getUserStoreProperties().get(UserStoreConstants
                 .USER_STORE_ID) != null) {
@@ -207,5 +202,56 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public IdentityObject addUser(Map<String, String> claims, Object credential, String[] roleList, boolean
+            requirePasswordChange) throws UserStoreException {
+        return null;
+    }
+
+    @Override
+    public void updateCredential(String userID, Object newCredential, Object oldCredential) throws UserStoreException {
+
+    }
+
+    @Override
+    public void updateCredentialByAdmin(String userID, Object newCredential) throws UserStoreException {
+
+    }
+
+    @Override
+    public void deleteUser(String userID) throws UserStoreException {
+
+    }
+
+    @Override
+    public void deleteGroup(String roleName) throws UserStoreException {
+
+    }
+
+    @Override
+    public void setUserClaimValue(String userID, String claimURI, String claimValue) throws UserStoreException {
+
+    }
+
+    @Override
+    public void setUserClaimValues(String userID, Map<String, String> claims) throws UserStoreException {
+
+    }
+
+    @Override
+    public void deleteUserClaimValue(String userID, String claimURI) throws UserStoreException {
+
+    }
+
+    @Override
+    public void deleteUserClaimValues(String userID, String[] claims, String profileName) throws UserStoreException {
+
+    }
+
+    @Override
+    public String getUserStoreName() {
+        return getUserStoreConfig().getUserStoreProperties().getProperty(UserStoreConstants.USER_STORE_NAME);
     }
 }

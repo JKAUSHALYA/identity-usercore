@@ -26,7 +26,7 @@ public class AuthenticationContext {
 
     private IdentityObject subject;
 
-    private boolean isAuthenticated;
+    private boolean isAuthenticated = false;
 
     private AuthenticationFailure failure;
 
