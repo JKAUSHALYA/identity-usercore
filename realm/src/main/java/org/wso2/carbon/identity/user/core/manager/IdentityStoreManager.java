@@ -23,9 +23,6 @@ import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.stores.UserStore;
 import org.wso2.carbon.identity.user.core.stores.UserStoreConstants;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -109,26 +106,13 @@ public class IdentityStoreManager {
         this.addUserStore(config);
     }
 
-    protected Properties readUserStoreConfig(String userStoreName) throws UserStoreException {
+    protected Properties readUserStoreConfig(String userStoreName) {
 
-        ResourceBundle bundle = ResourceBundle.getBundle("files");
-        String filePath = bundle.getString("filepath");
-        InputStream input = null;
+        ResourceBundle bundle = ResourceBundle.getBundle("PRIMARY");
         Properties prop = new Properties();
 
-        try {
-            input = new FileInputStream(filePath);
-            prop.load(input);
-        } catch (IOException e) {
-            throw new UserStoreException("Error while reading configuration file for user store " + userStoreName, e);
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    log.error(e.getMessage());
-                }
-            }
+        for (String key : bundle.keySet()) {
+            prop.put(key, bundle.getString(key));
         }
         return prop;
     }

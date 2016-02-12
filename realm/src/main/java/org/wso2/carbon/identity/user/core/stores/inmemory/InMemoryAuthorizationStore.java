@@ -48,13 +48,18 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
         rolePermissions.put(roleArrya[1].getRoleName(), permissions);
     }
 
-    public List<Role> getRoles(String userId) {
-
+    @Override
+    public List<Role> getRolesForUser(String userId) {
         return userRoles.get(userId);
     }
 
-    public List<Permission> getPermissions(String roleName) {
+    @Override
+    public List<Role> getRolesForGroup(String roleName) {
+        return null;
+    }
 
+    @Override
+    public List<Permission> getPermissionsForRole(String roleName) {
         return rolePermissions.get(roleName);
     }
 }

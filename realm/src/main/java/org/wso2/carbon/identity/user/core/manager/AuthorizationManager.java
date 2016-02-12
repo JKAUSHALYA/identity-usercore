@@ -42,7 +42,7 @@ public class AuthorizationManager implements PersistenceManager {
         Map<String, AuthorizationStore> authorizationStoreList = authorizationStoreManager.getAuthorizationStores();
 
         for (AuthorizationStore authorizationStore : authorizationStoreList.values()) {
-            List<Role> roles = authorizationStore.getRoles(userId);
+            List<Role> roles = authorizationStore.getRolesForUser(userId);
 
             for (Role role : roles) {
                 List<Permission> permissions = role.getPermissions();
