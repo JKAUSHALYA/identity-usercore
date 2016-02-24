@@ -26,6 +26,8 @@ public class UserStoreException extends Exception {
      */
     private static final long serialVersionUID = -6057036683816666255L;
 
+    private int errorCode;
+
     public UserStoreException() {
         super();
     }
@@ -46,4 +48,11 @@ public class UserStoreException extends Exception {
         super(cause);
     }
 
+    public int getErrorCode() {
+        return this.errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
 }

@@ -18,11 +18,12 @@ package org.wso2.carbon.identity.user.core.stores.inmemory;
 
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.model.Group;
-import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.principal.User;
 import org.wso2.carbon.identity.user.core.stores.AbstractUserStore;
 import org.wso2.carbon.identity.user.core.stores.UserStoreConstants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,16 +43,14 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         users = new HashMap<>();
         groups = new HashMap<>();
 
-//        InMemoryUserStoreUser user = new InMemoryUserStoreUser();
-//        HashMap<String, String> claims = new HashMap<String, String>();
-//        List<String> groupList = new ArrayList<String>();
-//        claims.put("userName", "admin");
-//        user.setPassword("password".toCharArray());
-//        groupList.add("ADMIN");
-//        user.setClaims(claims);
-//        user.setGroups(groupList);
-//        user.setUserID("12345");
-       // users.put("12345", user);
+        InMemoryUserStoreUser user = new InMemoryUserStoreUser();
+        Map<String, String> claims = new HashMap<>();
+        claims.put("username", "admin");
+        String uuid = UUID.randomUUID().toString();
+        user.setUserID(uuid);
+        user.setClaims(claims);
+        user.setPassword(new char [] {'a', 'd', 'm', 'i', 'n'});
+        users.put(uuid, user);
 
         InMemoryUserStoreGroup group = new InMemoryUserStoreGroup();
         group.setGroupID("12345555555");
@@ -62,10 +61,10 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     public boolean authenticate(String userid, Object credential) throws UserStoreException {
-        return String.copyValueOf(users.get(userid).getPassword()).equals(credential);
+
+        return Arrays.equals((char[]) credential, users.get(userid).getPassword());
     }
 
-    @Override
     public boolean isExistingUser(String userName) throws UserStoreException {
         if (users.get(userName) != null) {
             return true;
@@ -73,7 +72,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         return false;
     }
 
-    @Override
     public boolean isExistingRole(String groupName) throws UserStoreException {
         if (groups.get(groupName) != null) {
             return true;
@@ -82,17 +80,15 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit)
+    public List<User> listUsers(String claimAttribute, String filter)
             throws UserStoreException {
 
-        ArrayList<IdentityObject> userList = new ArrayList<IdentityObject>();
-        Iterator it = users.entrySet().iterator();
-        int count = 0;
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            if (pair.getValue().toString().contains(filter)) {
-                InMemoryUserStoreUser user = (InMemoryUserStoreUser) pair.getValue();
-                userList.add(new IdentityObject(user.getUserID()));
+        ArrayList<User> userList = new ArrayList<>();
+
+        for (InMemoryUserStoreUser user : users.values()) {
+
+            if (user.getClaims().containsKey(claimAttribute) && user.getClaims().containsValue(filter)) {
+                userList.add(new User(user.getUserID()));
             }
         }
         return userList;
@@ -105,29 +101,27 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public IdentityObject searchUser(String userID) throws UserStoreException {
+    public User getUser(String userID) throws UserStoreException {
         InMemoryUserStoreUser user = users.get(userID);
         if (user != null) {
-            return new IdentityObject(user.getUserID());
+            return new User(user.getUserID());
         }
         throw new UserStoreException("Could not find a user with given userID");
     }
 
-    @Override
-    public IdentityObject searchUser(String claimAttribute, String value) throws UserStoreException {
+    public User getUser(String claimAttribute, String value) throws UserStoreException {
         return retrieveUser(claimAttribute, value);
     }
 
     @Override
-    public Group searchGroup(String groupID) throws UserStoreException {
+    public Group getGroup(String groupID) throws UserStoreException {
         InMemoryUserStoreGroup inMemoryUserStoreGroup = this.groups.get(groupID);
         Group group = new Group(inMemoryUserStoreGroup.getGroupID());
         group.setUserStoreID(this.getUserStoreID());
         return group;
     }
 
-    @Override
-    public Group searchGroup(String attribute, String value) throws UserStoreException {
+    public Group getGroup(String attribute, String value) throws UserStoreException {
 
         Iterator it = groups.entrySet().iterator();
         while (it.hasNext()) {
@@ -155,7 +149,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException {
+    public List<User> getUsersOfGroup(String groupID) throws UserStoreException {
         return null;
     }
 
@@ -164,7 +158,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         return users.get(userID).getClaims();
     }
 
-    public IdentityObject retrieveUser(String claimAttribute, String value) throws UserStoreException {
+    public User retrieveUser(String claimAttribute, String value) throws UserStoreException {
 
         Iterator it = users.entrySet().iterator();
         while (it.hasNext()) {
@@ -172,7 +166,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
             InMemoryUserStoreUser inMemoryUserStoreUser = (InMemoryUserStoreUser) pair.getValue();
             String claimValue = inMemoryUserStoreUser.getClaims().get(claimAttribute);
             if (claimValue != null && claimValue.equalsIgnoreCase(value)) {
-                return new IdentityObject(inMemoryUserStoreUser.getUserID());
+                return new User(inMemoryUserStoreUser.getUserID());
             }
         }
         return null;
@@ -204,7 +198,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public IdentityObject addUser(Map<String, String> claims, Object credential, List<String> groupList, boolean
+    public User addUser(Map<String, String> claims, Object credential, List<String> groupList, boolean
             requirePasswordChange) throws UserStoreException {
         UUID userID = UUID.randomUUID();
         InMemoryUserStoreUser user = new InMemoryUserStoreUser();
@@ -213,7 +207,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         user.setPassword((char[]) credential);
         user.setClaims(claims);
         this.users.put(user.getUserID() , user);
-        return new IdentityObject(userID.toString());
+        return new User(userID.toString());
     }
 
     @Override
@@ -232,7 +226,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public void updateCredentialByAdmin(String userID, Object newCredential) throws UserStoreException {
+    public void updateCredential(String userID, Object newCredential) throws UserStoreException {
 
         InMemoryUserStoreUser user = users.get(userID);
         if (user != null) {
@@ -262,7 +256,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         }
     }
 
-    @Override
     public void setUserClaimValue(String userID, String claimURI, String claimValue) throws UserStoreException {
         InMemoryUserStoreUser user = users.get(userID);
         if (user != null) {
@@ -282,7 +275,6 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
         }
     }
 
-    @Override
     public void deleteUserClaimValue(String userID, String claimURI) throws UserStoreException {
         InMemoryUserStoreUser user = users.get(userID);
         if (user != null) {
@@ -293,7 +285,7 @@ public class InMemoryReadOnlyUserStore extends AbstractUserStore {
     }
 
     @Override
-    public void deleteUserClaimValues(String userID, String[] claims, String profileName) throws UserStoreException {
+    public void deleteUserClaimValues(String userID, List<String> claims) throws UserStoreException {
         InMemoryUserStoreUser user = users.get(userID);
         if (user != null) {
             for (String claim : claims) {

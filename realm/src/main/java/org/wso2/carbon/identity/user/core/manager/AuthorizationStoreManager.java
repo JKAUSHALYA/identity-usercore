@@ -17,6 +17,7 @@
 package org.wso2.carbon.identity.user.core.manager;
 
 import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
+import org.wso2.carbon.identity.user.core.stores.inmemory.InMemoryAuthorizationStore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,10 @@ public class AuthorizationStoreManager {
     private static AuthorizationStoreManager instance = new AuthorizationStoreManager();
 
     private AuthorizationStoreManager() {
+
         super();
+        AuthorizationStore authorizationStore = new InMemoryAuthorizationStore();
+        addAuthorizationStore("PRIMARY", authorizationStore);
     }
 
     public static AuthorizationStoreManager getInstance() {

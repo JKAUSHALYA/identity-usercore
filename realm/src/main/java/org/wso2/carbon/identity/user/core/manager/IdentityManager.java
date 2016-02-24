@@ -22,7 +22,7 @@ import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.model.Group;
-import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.principal.User;
 import org.wso2.carbon.identity.user.core.stores.UserStore;
 
 import java.util.ArrayList;
@@ -45,47 +45,44 @@ public class IdentityManager implements PersistenceManager {
         this.identityStoreManager = identityStoreManager;
     }
 
-    public AuthenticationContext authenticate(String userID, Object credential) {
+    public AuthenticationContext authenticate(String userID, Object credential) throws AuthenticationFailure,
+            UserStoreException {
 
         AuthenticationContext context = new AuthenticationContext();
-        boolean isAuthenticated = false;
+        UserStore userStore = getUserStoreOfUser(userID);
 
-        try {
-            UserStore userStore = getUserStoreOfUser(userID);
-            isAuthenticated = userStore.authenticate(userID, credential);
-            context.setAuthenticated(isAuthenticated);
-            if (isAuthenticated) {
-                IdentityObject subject = new IdentityObject(userID);
-                subject.setUserStoreID(userStore.getUserStoreID());
-                context.setSubject(subject);
-            }
-
-        } catch (Exception e) {
-            context.setAuthenticated(false);
-            context.setFailure(new AuthenticationFailure(e));
+        if (!userStore.authenticate(userID, credential)) {
+            throw new AuthenticationFailure("Invalid user credentials");
         }
+        User subject = new User(userID);
+        subject.setUserStoreID(userStore.getUserStoreID());
+        context.setUser(subject);
         return context;
     }
 
-    public List<IdentityObject> searchUserFromClaim(String claimAttribute, String claimValue) throws
-            UserStoreException {
-        List<IdentityObject> users = new ArrayList<IdentityObject>();
-        String userStoreDomain = "";
-        if (!(claimValue.indexOf("/") < 0)) {
-            userStoreDomain = claimValue.substring(0, claimValue.indexOf("/"));
+    public List<User> searchUserFromClaim(String claimAttribute, String claimValue) throws UserStoreException {
+
+        List<User> users = new ArrayList<>();
+
+        // If the user store name is with the claim.
+        if (claimValue.contains("/")) {
+            String userStoreDomain = claimValue.substring(0, claimValue.indexOf("/"));
             claimValue = claimValue.substring(1, claimValue.indexOf("/"));
             UserStore userStore = identityStoreManager.getUserStore(userStoreDomain);
+
             if (userStore != null) {
-                users.add(userStore.searchUser(claimAttribute, claimValue));
+                users.add(userStore.getUser(claimValue));
             }
         } else {
+
+            // Else, search every user store.
             Map<String, UserStore> userStores = identityStoreManager.getUserStores();
-            Iterator it = userStores.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
+
+            for (Map.Entry pair : userStores.entrySet()) {
                 UserStore userStore = (UserStore) pair.getValue();
-                IdentityObject user = userStore.searchUser(claimAttribute, claimValue);
-                if (user != null) {
+                List<User> listUsers = userStore.listUsers(claimAttribute, claimValue);
+
+                for (User user : listUsers) {
                     user.setUserStoreID(userStore.getUserStoreID());
                     UserIDManager.storeUserStoreIDOfUser(user.getUserID(), userStore.getUserStoreID());
                     users.add(user);
@@ -96,6 +93,7 @@ public class IdentityManager implements PersistenceManager {
     }
 
     public List<Group> getGroupsOfUser(String userID) throws UserStoreException {
+
         UserStore userStore = getUserStoreOfUser(userID);
         if (userStore != null) {
             return userStore.getGroupsOfUser(userID);
@@ -104,21 +102,21 @@ public class IdentityManager implements PersistenceManager {
     }
 
     public List<Group> getGroup(String attribute, String value) throws UserStoreException {
-        List<Group> groupList = new ArrayList<Group>();
+
+        List<Group> groupList = new ArrayList<>();
         if (value.indexOf("/") < 0) {
             String userStoreDomain = value.substring(0, value.indexOf("/"));
             value = value.substring(0, value.indexOf("/"));
             UserStore userStore = identityStoreManager.getUserStore(userStoreDomain);
-            Group group = userStore.searchGroup(attribute, value);
+            Group group = userStore.getGroup(value);
             groupList.add(group);
         } else {
-
             Map<String, UserStore> userStores = identityStoreManager.getUserStores();
             Iterator it = userStores.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
                 UserStore userStore = (UserStore) pair.getValue();
-                Group group = userStore.searchGroup(attribute, value);
+                Group group = userStore.getGroup(value);
                 group.setUserStoreID(userStore.getUserStoreID());
                 UserIDManager.storeUserStoreIDOfGroup(group.getGroupID(), userStore.getUserStoreID());
                 groupList.add(group);
@@ -127,7 +125,8 @@ public class IdentityManager implements PersistenceManager {
         return groupList;
     }
 
-    public List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException {
+    public List<User> getUsersOfGroup(String groupID) throws UserStoreException {
+
         UserStore userStore = getUserStoreOfUser(groupID);
         if (userStore != null) {
             return userStore.getUsersOfGroup(groupID);
@@ -137,18 +136,19 @@ public class IdentityManager implements PersistenceManager {
 
 
     /**
-     * Returns IdentityObject of the user with given ID,
+     * Returns User of the user with given ID,
      *
      * @param userID
      * @return
      * @throws UserStoreException
      */
-    public IdentityObject searchUser(String userID) throws UserStoreException {
+    public User searchUser(String userID) throws UserStoreException {
+
         UserStore userStore = getUserStoreFromMapping(userID);
-        IdentityObject user = null;
+        User user = null;
 
         if (userStore != null) {
-            user = userStore.searchUser(userID);
+            user = userStore.getUser(userID);
             if (user != null) {
                 user.setUserID(userStore.getUserStoreID());
                 UserIDManager.storeUserStoreIDOfUser(userID, userStore.getUserStoreID());
@@ -165,6 +165,7 @@ public class IdentityManager implements PersistenceManager {
     }
 
     public Map<String, String> getUserClaimValues(String userID) throws UserStoreException {
+
         UserStore userStore = getUserStoreOfUser(userID);
         if (userStore != null) {
             return userStore.getUserClaimValues(userID);
@@ -177,18 +178,18 @@ public class IdentityManager implements PersistenceManager {
      * Iteratively searches user in all user stores and returns user
      *
      * @param userID ID of the user.
-     * @return use IdentityObject
+     * @return use User
      * @throws UserStoreException
      */
-    private IdentityObject searchUserInUserStores(String userID) throws UserStoreException {
+    private User searchUserInUserStores(String userID) throws UserStoreException {
 
         HashMap<String, UserStore> userStores = identityStoreManager.getUserStores();
-        IdentityObject user;
+        User user;
         Iterator it = userStores.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             UserStore userStore = (UserStore) pair.getValue();
-            user = userStore.searchUser(userID);
+            user = userStore.getUser(userID);
             user.setUserStoreID(userStore.getUserStoreID());
             UserIDManager.storeUserStoreIDOfUser(userID, userStore.getUserStoreID());
             return user;
@@ -217,7 +218,7 @@ public class IdentityManager implements PersistenceManager {
     private UserStore getUserStoreOfUser(String userID) throws UserStoreException {
         UserStore userStore = getUserStoreFromMapping(userID);
         if (userStore == null) {
-            IdentityObject user = searchUserInUserStores(userID);
+            User user = searchUserInUserStores(userID);
             userStore = identityStoreManager.getUserStore(user.getUserStoreID());
         }
 
@@ -229,7 +230,7 @@ public class IdentityManager implements PersistenceManager {
         }
     }
 
-    public IdentityObject addUser(String userStoreID, Map<String, String> claims, Object credential, List<String>
+    public User addUser(String userStoreID, Map<String, String> claims, Object credential, List<String>
             groupList, boolean requirePasswordChange) throws UserStoreException {
         if (userStoreID == null) {
             userStoreID = "1";

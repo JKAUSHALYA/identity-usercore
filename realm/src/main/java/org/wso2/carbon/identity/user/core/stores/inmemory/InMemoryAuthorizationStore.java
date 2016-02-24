@@ -16,11 +16,12 @@
 
 package org.wso2.carbon.identity.user.core.stores.inmemory;
 
+import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
 import org.wso2.carbon.identity.user.core.model.Permission;
 import org.wso2.carbon.identity.user.core.model.Role;
 import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,22 +31,92 @@ import java.util.Map;
  */
 public class InMemoryAuthorizationStore implements AuthorizationStore {
 
+    private Map<String, Role> roles = new HashMap<>();
+    private Map<String, Permission> permissions = new HashMap<>();
     private Map<String, List<Role>> userRoles = new HashMap<>();
     private Map<String, List<Permission>> rolePermissions = new HashMap<>();
 
     public InMemoryAuthorizationStore() {
 
-        Role [] roleArrya = { new Role("admin"), new Role("internal/everyone") };
-        Permission [] permissionArray = { new Permission("/permissions/all"), new Permission("/permissions/login")};
-        List<Role> roles = Arrays.asList(roleArrya);
-        List<Permission> permissions = Arrays.asList(permissionArray);
+        roles.put("admin", new Role("admin"));
+        roles.put("internal/everyone", new Role("internal/everyone"));
 
-        roleArrya[0].setPermissions(permissions);
-        roleArrya[1].setPermissions(permissions);
+        permissions.put("/permissions/all", new Permission("/permissions/all"));
+        permissions.put("/permissions/login", new Permission("/permissions/login"));
+    }
 
-        userRoles.put("12345", roles);
-        rolePermissions.put(roleArrya[0].getRoleName(), permissions);
-        rolePermissions.put(roleArrya[1].getRoleName(), permissions);
+    @Override
+    public void addUserRole(String userId, String roleName) throws AuthorizationStoreException {
+
+        if (!roles.containsKey(roleName)) {
+            throw new AuthorizationStoreException("Role does not exists");
+        }
+
+        if (userRoles.containsKey(userId)) {
+            List<Role> rolesOfUser = userRoles.get(userId);
+
+            for (Role role : rolesOfUser) {
+
+                if (role.getRoleName().equals(roleName)) {
+                    throw new AuthorizationStoreException("Role already exist for user.");
+                }
+            }
+            rolesOfUser.add(roles.get(roleName));
+            userRoles.put(userId, rolesOfUser);
+        } else {
+            List<Role> rolesOfUser = new ArrayList<>();
+            rolesOfUser.add(roles.get(roleName));
+            userRoles.put(userId, rolesOfUser);
+        }
+    }
+
+    @Override
+    public void addRolePermission(String roleName, String permissionName) throws AuthorizationStoreException {
+
+        if (!roles.containsKey(roleName)) {
+            throw new AuthorizationStoreException("Role does not exists");
+        }
+
+        if (!permissions.containsKey(permissionName)) {
+            throw new AuthorizationStoreException("Permission does not exists");
+        }
+
+        if (rolePermissions.containsKey(roleName)) {
+            List<Permission> permissionsOfRole = rolePermissions.get(roleName);
+
+            for (Permission permission : permissionsOfRole) {
+
+                if (permission.getPermissionString().equals(permissionName)) {
+                    throw new AuthorizationStoreException("Permission already exists for the role");
+                }
+                permissionsOfRole.add(permissions.get(permissionName));
+                rolePermissions.put(roleName, permissionsOfRole);
+            }
+        } else {
+            List<Permission> permissionsOfRole = new ArrayList<>();
+            permissionsOfRole.add(permissions.get(permissionName));
+            rolePermissions.put(roleName, permissionsOfRole);
+        }
+    }
+
+    @Override
+    public Role getRole(String roleId) {
+        return null;
+    }
+
+    @Override
+    public Permission getPermission(String permissionId) {
+        return null;
+    }
+
+    @Override
+    public List<Role> listRoles(String attribute, String filter) {
+        return null;
+    }
+
+    @Override
+    public List<Permission> listPermissions(String attribute, String filter) {
+        return null;
     }
 
     @Override

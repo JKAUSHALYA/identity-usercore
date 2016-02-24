@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.identity.user.core.model;
 
-import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.principal.User;
 
 import java.util.List;
 
@@ -49,10 +49,10 @@ public class Group {
         this.userStoreID = userStoreID;
     }
 
-    public List<IdentityObject> getUsers() {
+    public List<User> getUsers() {
         return null;
     }
 
-    public void setUsers(List<IdentityObject> users) {
+    public void setUsers(List<User> users) {
     }
 }

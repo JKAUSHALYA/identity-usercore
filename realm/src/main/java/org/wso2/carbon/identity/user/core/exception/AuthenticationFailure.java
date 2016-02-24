@@ -19,11 +19,16 @@ package org.wso2.carbon.identity.user.core.exception;
 /**
  * AuthenticationFailure
  */
-public class AuthenticationFailure extends Throwable {
+public class AuthenticationFailure extends Exception {
+
     private Exception cause;
 
     public AuthenticationFailure(Exception e) {
         this.cause = e;
+    }
+
+    public AuthenticationFailure(String message) {
+        super(message);
     }
 
     @Override

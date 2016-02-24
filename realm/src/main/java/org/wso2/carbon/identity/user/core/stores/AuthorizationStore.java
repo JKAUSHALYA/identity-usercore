@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.identity.user.core.stores;
 
+import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
 import org.wso2.carbon.identity.user.core.model.Permission;
 import org.wso2.carbon.identity.user.core.model.Role;
 
@@ -25,6 +26,51 @@ import java.util.List;
  * Authorization store.
  */
 public interface AuthorizationStore {
+
+    /**
+     * Add a user against a role.
+     * @param userId Id of the user.
+     * @param roleName Name of the role.
+     */
+    public void addUserRole(String userId, String roleName) throws AuthorizationStoreException;
+
+    /**
+     * Add a permission to a role.
+     * @param roleName Name of the role.
+     * @param permissionName Name of the permission.
+     * @throws AuthorizationStoreException
+     */
+    public void addRolePermission(String roleName, String permissionName) throws AuthorizationStoreException;
+
+    /**
+     * Get the role of from role id.
+     * @param roleId Id of the Role
+     * @return Role.
+     */
+    public Role getRole(String roleId);
+
+    /**
+     * Get permission from the permission id.
+     * @param permissionId Id of the permission.
+     * @return Permission.
+     */
+    public Permission getPermission(String permissionId);
+
+    /**
+     * List the roles.
+     * @param atribute
+     * @param filter
+     * @return
+     */
+    public List<Role> listRoles(String atribute, String filter);
+
+    /**
+     * List the permissions.
+     * @param atribute
+     * @param filter
+     * @return
+     */
+    public List<Permission> listPermissions(String atribute, String filter);
 
     /**
      * Get roles for the user id.

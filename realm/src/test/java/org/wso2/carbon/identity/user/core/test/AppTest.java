@@ -20,13 +20,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
+import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
+import org.wso2.carbon.identity.user.core.exception.AuthorizationFailure;
+import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
 import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
-import org.wso2.carbon.identity.user.core.manager.AuthorizationStoreManager;
+import org.wso2.carbon.identity.user.core.manager.IdentityManager;
 import org.wso2.carbon.identity.user.core.model.Permission;
-import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
-import org.wso2.carbon.identity.user.core.stores.inmemory.InMemoryAuthorizationStore;
+import org.wso2.carbon.identity.user.core.principal.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,43 +41,40 @@ public class AppTest {
 
     private AuthenticationManager authManager = null;
     private AuthorizationManager authzManager = null;
+    private IdentityManager identityManager = null;
 
     public void configure() throws UserStoreException {
 
         authManager = BasicUserRealmService.getInstance().getAuthenticationManager();
         authzManager = BasicUserRealmService.getInstance().getAuthorizationManager();
-
-        AuthorizationStore authorizationStore = new InMemoryAuthorizationStore();
-        AuthorizationStoreManager.getInstance().addAuthorizationStore("PRIMARY", authorizationStore);
+        identityManager = BasicUserRealmService.getInstance().getIdentityManager();
     }
 
-    private void addUser() {
+    private void addUser() throws UserStoreException, AuthorizationStoreException {
+
         Map<String, String> userClaims = new HashMap<>();
         userClaims.put("userName", "admin");
-        try {
-            BasicUserRealmService.getInstance().getIdentityManager().addUser(null, userClaims, "password".toCharArray()
-                    , new ArrayList<String>(), true);
-        } catch (UserStoreException e) {
-            Assert.fail();
-        }
+
+        User user = identityManager
+                .addUser(null, userClaims, "password".toCharArray(), new ArrayList<String>(), false);
+        String userId = user.getUserID();
+
+        authzManager.addUserRole(userId, "internal/everyone", "PRIMARY");
+        authzManager.addRolePermission("internal/everyone", "/permissions/login", "PRIMARY");
     }
 
     @Test
-    public void testApp() throws UserStoreException {
+    public void testApp() throws UserStoreException, AuthorizationStoreException, AuthorizationFailure,
+            AuthenticationFailure {
 
         configure();
         addUser();
 
         String userName = "admin";
         String password = "password";
-        String userId = null;
 
-        AuthenticationContext context = authManager.authenticate("userName", userName, password);
-        if (context.isAuthenticated()) {
-            userId = context.getSubject().getUserID();
-        }
-
-        Assert.assertTrue(context.isAuthenticated());
+        AuthenticationContext context = authManager.authenticate("userName", userName, password.toCharArray());
+        String userId = context.getUser().getUserID();
         Assert.assertTrue(authzManager.isUserAuthorized(userId, new Permission("/permissions/login")));
     }
 }

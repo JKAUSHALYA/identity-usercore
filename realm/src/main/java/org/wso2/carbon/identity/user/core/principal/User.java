@@ -24,15 +24,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * IdentityObject
+ * User
  */
-public class IdentityObject {
+public class User {
 
     private String userID;
 
     private String userStoreID;
 
-    public IdentityObject(String userID) {
+    public User(String userID) {
         this.userID = userID;
     }
 

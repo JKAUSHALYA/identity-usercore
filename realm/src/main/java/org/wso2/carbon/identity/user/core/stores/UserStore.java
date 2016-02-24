@@ -19,7 +19,7 @@ package org.wso2.carbon.identity.user.core.stores;
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.model.Group;
-import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.principal.User;
 
 import java.util.List;
 import java.util.Map;
@@ -69,43 +69,32 @@ public interface UserStore {
     boolean authenticate(String userID, Object credential) throws UserStoreException;
 
     /**
-     * Checks whether a with given user id exists in the user store
-     *
-     * @param userID Unique user ID
-     * @return True if the user is in user store, False if user is not avalable.
-     * @throws UserStoreException
-     */
-    boolean isExistingUser(String userID) throws UserStoreException;
-
-    /**
-     * List all users in User Store.
-     *
-     * @param claimAttribute Claim attribute to be searched
-     * @param filter         search filter to be applied while searching users
-     * @param maxItemLimit
-     * @return List of Identities which matches the given claim attribute with given filter
-     * @throws UserStoreException
-     */
-    List<IdentityObject> listUsers(String claimAttribute, String filter, int maxItemLimit) throws UserStoreException;
-
-    /**
      * Search user from user id
      *
      * @param userID User Id of the user
      * @return Identity Object with
      * @throws UserStoreException
      */
-    IdentityObject searchUser(String userID) throws UserStoreException;
+    User getUser(String userID) throws UserStoreException;
 
     /**
-     * Search user from user attributes.
+     * List all users in User Store.
      *
-     * @param claimAttribute Claim attribute to be searched.
-     * @param value          value of the attribute to be searched.
-     * @return Identity Object with user.
+     * @param claimAttribute Claim attribute to be searched
+     * @param filter         search filter to be applied while searching users
+     * @return List of Identities which matches the given claim attribute with given filter
      * @throws UserStoreException
      */
-    IdentityObject searchUser(String claimAttribute, String value) throws UserStoreException;
+    List<User> listUsers(String claimAttribute, String filter) throws UserStoreException;
+
+    /**
+     * Retrieve set of claims of the user with the given ID
+     *
+     * @param userID ID of the user whose claims are requested
+     * @return Claims map of the user with given ID
+     * @throws UserStoreException
+     */
+    Map<String, String> getUserClaimValues(String userID) throws UserStoreException;
 
     /**
      * Retrieve group with given group ID
@@ -114,15 +103,7 @@ public interface UserStore {
      * @return Group with the given GroupID
      * @throws UserStoreException
      */
-    Group searchGroup(String groupID) throws UserStoreException;
-
-    /**
-     * @param attribute Search  group from a given attribute
-     * @param value     Value of the attribute to be searched
-     * @return Group which matches given attribute
-     * @throws UserStoreException
-     */
-    Group searchGroup(String attribute, String value) throws UserStoreException;
+    Group getGroup(String groupID) throws UserStoreException;
 
     /**
      * List Groups with given filter for given attribute.
@@ -149,25 +130,23 @@ public interface UserStore {
      * @return Set of IdentityObjects resides in Group
      * @throws UserStoreException
      */
-    List<IdentityObject> getUsersOfGroup(String groupID) throws UserStoreException;
+    List<User> getUsersOfGroup(String groupID) throws UserStoreException;
 
-    /**
-     * Retrieve set of claims of the user with the given ID
-     *
-     * @param userID ID of the user whose claims are requested
-     * @return Claims map of the user with given ID
-     * @throws UserStoreException
-     */
-    Map<String, String> getUserClaimValues(String userID) throws UserStoreException;
+    User addUser(Map<String, String> claims, Object credential, List<String> groupList, boolean
+            requirePasswordChange) throws UserStoreException;
 
-    /**
-     * To check whether a given role is existing in the user store
-     *
-     * @param roleID Unique ID of the role
-     * @return True if a role with given ID exists, else false
-     * @throws UserStoreException
-     */
-    boolean isExistingRole(String roleID) throws UserStoreException;
+    void updateCredential(String userID, Object newCredential, Object oldCredential)
+            throws UserStoreException;
+
+    void updateCredential(String userID, Object newCredential) throws UserStoreException;
+
+    void setUserClaimValues(String userID, Map<String, String> claims) throws UserStoreException;
+
+    void deleteUserClaimValues(String userID, List<String> claims) throws UserStoreException;
+
+    void deleteUser(String userID) throws UserStoreException;
+
+    void deleteGroup(String roleName) throws UserStoreException;
 
     /**
      * To check whether a user store is read only
@@ -183,32 +162,4 @@ public interface UserStore {
      * @return UserStoreConfig which consists of user store configurations
      */
     UserStoreConfig getUserStoreConfig();
-
-    /**
-     * Set user store configurations
-     *
-     * @param userStoreConfig user store configurations.
-     */
-    void setUserStoreConfig(UserStoreConfig userStoreConfig);
-
-    IdentityObject addUser(Map<String, String> claims, Object credential, List<String> groupList, boolean
-            requirePasswordChange) throws UserStoreException;
-
-    void updateCredential(String userID, Object newCredential, Object oldCredential)
-            throws UserStoreException;
-
-    void updateCredentialByAdmin(String userID, Object newCredential) throws UserStoreException;
-
-    void deleteUser(String userID) throws UserStoreException;
-
-    void deleteGroup(String roleName) throws UserStoreException;
-
-    void setUserClaimValue(String userID, String claimURI, String claimValue) throws UserStoreException;
-
-    void setUserClaimValues(String userID, Map<String, String> claims) throws UserStoreException;
-
-    void deleteUserClaimValue(String userID, String claimURI) throws UserStoreException;
-
-    void deleteUserClaimValues(String userID, String[] claims, String profileName) throws UserStoreException;
-
 }

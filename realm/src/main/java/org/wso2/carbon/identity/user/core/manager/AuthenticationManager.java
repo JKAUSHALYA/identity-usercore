@@ -20,34 +20,66 @@ import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.principal.IdentityObject;
+import org.wso2.carbon.identity.user.core.principal.User;
 
 import java.util.List;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
 
 /**
  * AuthenticationManager
  */
 public class AuthenticationManager implements PersistenceManager {
 
+    /**
+     * Authenticate a user.
+     * @param callbacks Callbacks to get the user information
+     * @return Authentication context.
+     * @throws UserStoreException
+     * @throws AuthenticationFailure
+     */
+    public AuthenticationContext authenticate(Callback [] callbacks) throws UserStoreException, AuthenticationFailure {
 
-    public AuthenticationContext authenticate(String claimAttribute, String value, Object credential) throws
-            UserStoreException {
+        char [] password = null;
+        String username = null;
 
-        List<IdentityObject> users = BasicUserRealmService.getInstance().getIdentityManager().searchUserFromClaim
-                (claimAttribute, value);
-        AuthenticationContext context;
-        for (IdentityObject user : users) {
-            context = BasicUserRealmService.getInstance().getIdentityManager().authenticate(user
-                    .getUserID(), credential);
-            if (context.isAuthenticated()) {
-                return context;
+        for (Callback callback : callbacks) {
+
+            if (callback instanceof NameCallback) {
+                username = ((NameCallback) callback).getName();
+            } else if (callback instanceof PasswordCallback) {
+                password = ((PasswordCallback) callback).getPassword();
             }
         }
 
-        context = new AuthenticationContext();
-        context.setAuthenticated(false);
-        context.setFailure(new AuthenticationFailure(new Exception("Could not authenticate user")));
+        if (username == null) {
+            throw new AuthenticationFailure("Username is null");
+        }
+
+        List<User> users = BasicUserRealmService.getInstance().getIdentityManager()
+                .searchUserFromClaim("username", username);
+        AuthenticationContext context = new AuthenticationContext();
+
+        for (User user : users) {
+            context = BasicUserRealmService.getInstance().getIdentityManager().authenticate(user.getUserID(), password);
+        }
+
         return context;
     }
 
+    public AuthenticationContext authenticate(String claimAttribute, String value, Object credential) throws
+            UserStoreException, AuthenticationFailure {
+
+        List<User> users = BasicUserRealmService.getInstance().getIdentityManager().searchUserFromClaim
+                (claimAttribute, value);
+        AuthenticationContext context = new AuthenticationContext();
+
+        for (User user : users) {
+            context = BasicUserRealmService.getInstance().getIdentityManager().authenticate(user
+                    .getUserID(), credential);
+        }
+
+        return context;
+    }
 }

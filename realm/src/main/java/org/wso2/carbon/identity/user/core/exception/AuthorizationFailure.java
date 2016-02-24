@@ -14,35 +14,22 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core.context;
-
-import org.wso2.carbon.identity.user.core.principal.User;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.wso2.carbon.identity.user.core.exception;
 
 /**
- * AuthenticationContext
+ * Authorization Failure.
  */
-public class AuthenticationContext {
+public class AuthorizationFailure extends Exception {
 
-    private User user;
-
-    private Map<Object, Object> properties = new HashMap<>();
-
-    public void addProperty(Object key, Object value) {
-        properties.put(key, value);
+    public AuthorizationFailure() {
+        super();
     }
 
-    public Object getProperty(Object key) {
-        return properties.get(key);
+    public AuthorizationFailure(String message) {
+        super(message);
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User subject) {
-        this.user = subject;
+    public AuthorizationFailure(Throwable t) {
+        super(t);
     }
 }

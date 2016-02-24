@@ -64,7 +64,7 @@ public class IdentityStoreManager {
             try {
                 clazz = Class.forName(userStoreClass);
                 UserStore userStore = (UserStore) clazz.newInstance();
-                userStore.setUserStoreConfig(userStoreConfig);
+                userStore.init(userStoreConfig);
                 userStores.put(userStoreID, userStore);
             } catch (ClassNotFoundException e) {
                 throw new UserStoreException("Error while initializing user store class " + userStoreClass, e);

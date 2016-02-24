@@ -16,7 +16,9 @@
 
 package org.wso2.carbon.identity.user.core.internal;
 
+import org.apache.log4j.Logger;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -32,13 +34,27 @@ import org.wso2.carbon.identity.user.core.service.UserRealmService;
 )
 public class RealmServiceComponent {
 
+    private Logger log = Logger.getLogger(RealmServiceComponent.class);
+    private ServiceRegistration registration;
+
     @Activate
     public void registerRealmService(BundleContext bundleContext) {
 
-        bundleContext.registerService(UserRealmService.class.getName(), BasicUserRealmService.getInstance(), null);
+        try {
+            registration = bundleContext.registerService(UserRealmService.class.getName(),
+                    BasicUserRealmService.getInstance(), null);
+        } catch (Throwable t) {
+            log.error(t);
+        }
     }
 
     @Deactivate
     public void unregisterRealmService(BundleContext bundleContext) {
+
+        try {
+            bundleContext.ungetService(registration.getReference());
+        } catch (Throwable t) {
+            log.error(t);
+        }
     }
 }
