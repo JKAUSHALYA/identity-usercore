@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.identity.user.core.context;
 
-import org.wso2.carbon.identity.user.core.principal.User;
+import org.wso2.carbon.identity.user.core.bean.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +26,13 @@ import java.util.Map;
  */
 public class AuthenticationContext {
 
+    private Map<Object, Object> properties = new HashMap<>();
+
     private User user;
 
-    private Map<Object, Object> properties = new HashMap<>();
+    public AuthenticationContext(User user) {
+        this.user = user;
+    }
 
     public void addProperty(Object key, Object value) {
         properties.put(key, value);
@@ -40,9 +44,5 @@ public class AuthenticationContext {
 
     public User getUser() {
         return user;
-    }
-
-    public void setUser(User subject) {
-        this.user = subject;
     }
 }

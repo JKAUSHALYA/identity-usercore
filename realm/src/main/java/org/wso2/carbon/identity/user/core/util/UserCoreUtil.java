@@ -32,14 +32,14 @@ public class UserCoreUtil {
      * @return
      */
     public String getUserName(String username) {
-        if (!(username.indexOf(DOMAIN_SEPARATOR) < 0)) {
+        if (username.contains(DOMAIN_SEPARATOR)) {
             return username.substring(username.indexOf(DOMAIN_SEPARATOR) + 1);
         }
         return username;
     }
 
     public String getUserStoreName(String username) {
-        if (!(username.indexOf(DOMAIN_SEPARATOR) < 0)) {
+        if (username.contains(DOMAIN_SEPARATOR)) {
             return username.substring(0, username.indexOf(DOMAIN_SEPARATOR));
         }
         return UserStoreConstants.PRIMARY;

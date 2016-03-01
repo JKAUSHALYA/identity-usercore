@@ -17,8 +17,9 @@
 package org.wso2.carbon.identity.user.core.stores.inmemory;
 
 import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
-import org.wso2.carbon.identity.user.core.model.Permission;
-import org.wso2.carbon.identity.user.core.model.Role;
+import org.wso2.carbon.identity.user.core.bean.Group;
+import org.wso2.carbon.identity.user.core.bean.Permission;
+import org.wso2.carbon.identity.user.core.bean.Role;
 import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
 
 import java.util.ArrayList;
@@ -33,7 +34,9 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
 
     private Map<String, Role> roles = new HashMap<>();
     private Map<String, Permission> permissions = new HashMap<>();
+
     private Map<String, List<Role>> userRoles = new HashMap<>();
+    private Map<String, List<Group>> roleGroup = new HashMap<>();
     private Map<String, List<Permission>> rolePermissions = new HashMap<>();
 
     public InMemoryAuthorizationStore() {
@@ -85,7 +88,6 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
             List<Permission> permissionsOfRole = rolePermissions.get(roleName);
 
             for (Permission permission : permissionsOfRole) {
-
                 if (permission.getPermissionString().equals(permissionName)) {
                     throw new AuthorizationStoreException("Permission already exists for the role");
                 }

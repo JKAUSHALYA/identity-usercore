@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core.model;
+package org.wso2.carbon.identity.user.core.bean;
 
 /**
- * Permission model.
+ * Permission bean.
  */
 public class Permission {
 

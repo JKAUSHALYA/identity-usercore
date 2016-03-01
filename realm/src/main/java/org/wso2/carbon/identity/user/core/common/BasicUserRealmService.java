@@ -17,12 +17,8 @@
 package org.wso2.carbon.identity.user.core.common;
 
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
-import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
-import org.wso2.carbon.identity.user.core.manager.AuthorizationStoreManager;
-import org.wso2.carbon.identity.user.core.manager.ClaimManager;
-import org.wso2.carbon.identity.user.core.manager.IdentityManager;
-import org.wso2.carbon.identity.user.core.manager.IdentityStoreManager;
-import org.wso2.carbon.identity.user.core.manager.ProfileManager;
+import org.wso2.carbon.identity.user.core.manager.VirtualAuthorizationStore;
+import org.wso2.carbon.identity.user.core.manager.VirtualIdentityStore;
 import org.wso2.carbon.identity.user.core.service.UserRealmService;
 
 /**
@@ -32,51 +28,33 @@ public class BasicUserRealmService implements UserRealmService {
 
     private static BasicUserRealmService instance = new BasicUserRealmService();
     private AuthenticationManager authenticationManager;
-    private AuthorizationManager authorizationManager;
-    private IdentityManager identityManager;
-    private IdentityStoreManager identityStoreManager;
-    private AuthorizationStoreManager authorizationStoreManager;
+    private VirtualAuthorizationStore virtualAuthorizationStore;
+    private VirtualIdentityStore virtualIdentityStore;
 
     private BasicUserRealmService() {
+
         authenticationManager = new AuthenticationManager();
-        authorizationManager = new AuthorizationManager();
-        identityStoreManager = new IdentityStoreManager();
-        identityManager = new IdentityManager(identityStoreManager);
-        authorizationStoreManager = AuthorizationStoreManager.getInstance();
+        virtualAuthorizationStore = new VirtualAuthorizationStore();
+        virtualIdentityStore = new VirtualIdentityStore();
     }
 
     public static UserRealmService getInstance() {
         return instance;
     }
 
+    @Override
     public AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
     }
 
-    public AuthorizationManager getAuthorizationManager() {
-        return authorizationManager;
-    }
-
-    public ClaimManager getClaimManager() {
-        throw new UnsupportedOperationException("Claim Manager is not available for basic user realm service");
-    }
-
-    public IdentityManager getIdentityManager() {
-        return identityManager;
+    @Override
+    public VirtualAuthorizationStore getVirtualAuthorizationStore() {
+        return virtualAuthorizationStore;
     }
 
     @Override
-    public ProfileManager getProfileManager() {
-        throw new UnsupportedOperationException("Profile Manager is not available for basic user realm service");
+    public VirtualIdentityStore getVirtualIdentityStore() {
+        return virtualIdentityStore;
     }
 
-    @Override
-    public IdentityStoreManager getIdentityStoreManager() {
-        throw new UnsupportedOperationException("Identity S is not available for basic user realm service");
-    }
-
-    @Override
-    public AuthorizationStoreManager getAuthorizationStoreManager() {
-        return authorizationStoreManager;
-    }
 }

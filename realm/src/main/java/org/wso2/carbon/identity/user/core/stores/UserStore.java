@@ -17,12 +17,15 @@
 package org.wso2.carbon.identity.user.core.stores;
 
 import org.wso2.carbon.identity.user.core.config.UserStoreConfig;
+import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.model.Group;
-import org.wso2.carbon.identity.user.core.principal.User;
+import org.wso2.carbon.identity.user.core.bean.Group;
+import org.wso2.carbon.identity.user.core.bean.User;
 
+import javax.security.auth.callback.Callback;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * User store.
@@ -36,13 +39,6 @@ public interface UserStore {
      * @throws UserStoreException
      */
     void init(UserStoreConfig userStoreConfig) throws UserStoreException;
-
-    /**
-     * Get user store's execution order ID.
-     *
-     * @return Execution order ID.`
-     */
-    int getExecutionOrder();
 
     /**
      * Get the name of the user store.
@@ -61,12 +57,11 @@ public interface UserStore {
     /**
      * Authenticate user with unique userID and any type of credentials
      *
-     * @param userID     Unique user ID
-     * @param credential Credentials Object
-     * @return Authentication result, true if successfully authenticated, unless false
+     * @param callbacks Callbacks to get the user attributes.
+     * @return Authentication result, User id if success, null otherwise.
      * @throws UserStoreException
      */
-    boolean authenticate(String userID, Object credential) throws UserStoreException;
+    String authenticate(Callback[] callbacks) throws UserStoreException, AuthenticationFailure;
 
     /**
      * Search user from user id
@@ -78,14 +73,23 @@ public interface UserStore {
     User getUser(String userID) throws UserStoreException;
 
     /**
+     * Get user from the user name.
+     * @param username
+     * @return
+     * @throws UserStoreException
+     */
+    User getUserByName(String username) throws UserStoreException;
+
+    /**
      * List all users in User Store.
      *
-     * @param claimAttribute Claim attribute to be searched
-     * @param filter         search filter to be applied while searching users
+     * @param filterPattern Filter pattern to be used.
+     * @param offset        Offset to get the Users.
+     * @param length        Number of users from the offset.
      * @return List of Identities which matches the given claim attribute with given filter
      * @throws UserStoreException
      */
-    List<User> listUsers(String claimAttribute, String filter) throws UserStoreException;
+    List<User> listUsers(String filterPattern, int offset, int length) throws UserStoreException;
 
     /**
      * Retrieve set of claims of the user with the given ID
@@ -95,6 +99,15 @@ public interface UserStore {
      * @throws UserStoreException
      */
     Map<String, String> getUserClaimValues(String userID) throws UserStoreException;
+
+    /**
+     *
+     * @param userID
+     * @param claimURIs
+     * @return
+     * @throws UserStoreException
+     */
+    Map<String, String> getUserClaimValues(String userID, Set<String> claimURIs) throws UserStoreException;
 
     /**
      * Retrieve group with given group ID
@@ -132,33 +145,95 @@ public interface UserStore {
      */
     List<User> getUsersOfGroup(String groupID) throws UserStoreException;
 
-    User addUser(Map<String, String> claims, Object credential, List<String> groupList, boolean
-            requirePasswordChange) throws UserStoreException;
-
-    void updateCredential(String userID, Object newCredential, Object oldCredential)
-            throws UserStoreException;
-
-    void updateCredential(String userID, Object newCredential) throws UserStoreException;
-
-    void setUserClaimValues(String userID, Map<String, String> claims) throws UserStoreException;
-
-    void deleteUserClaimValues(String userID, List<String> claims) throws UserStoreException;
-
-    void deleteUser(String userID) throws UserStoreException;
-
-    void deleteGroup(String roleName) throws UserStoreException;
+    /**
+     * Add an user to the user store.
+     * @param claims User claims.
+     * @param credential User credentials.
+     * @param groupList List of Groups of the user.
+     * @return Added user.
+     * @throws UserStoreException
+     */
+    User addUser(Map<String, String> claims, Object credential, List<String> groupList) throws UserStoreException;
 
     /**
-     * To check whether a user store is read only
-     *
+     * Add a Group.
+     * @return Added Group.
+     * @throws UserStoreException
+     */
+    Group addGroup(String groupName) throws UserStoreException;
+
+    /**
+     * Assign Group/s to an User.
+     * @param userId Id of the User.
+     * @param groups List of Groups to be assign.
+     * @throws UserStoreException
+     */
+    void assignGroupsToUser(String userId, List<Group> groups) throws UserStoreException;
+
+    /**
+     * Assign Users to Group.
+     * @param groupId Id of the Group.
+     * @param users List of Users.
+     * @throws UserStoreException
+     */
+    void assingUsersToGroup(String groupId, List<User> users) throws UserStoreException;
+
+    /**
+     * Add new credential to the User.
+     * @param userID ID of the user.
+     * @param newCredential New credential.
+     * @throws UserStoreException
+     */
+    void updateCredential(String userID, Object newCredential) throws UserStoreException;
+
+    /**
+     * Update credentials of a user.
+     * @param userID User Id.
+     * @param oldCredential Old credential.
+     * @param newCredential New credential.
+     * @throws UserStoreException
+     */
+    void updateCredential(String userID, Object oldCredential, Object newCredential) throws UserStoreException;
+
+    /**
+     * Set user attributes.
+     * @param userID User id.
+     * @param attributes Attributes.
+     * @throws UserStoreException
+     */
+    void setUserAttributeValues(String userID, Map<String, String> attributes) throws UserStoreException;
+
+    /**
+     * Delete user attribute/s of user.
+     * @param userID Id of the user.
+     * @param attributes Attributes.
+     * @throws UserStoreException
+     */
+    void deleteUserAttributeValues(String userID, List<String> attributes) throws UserStoreException;
+
+    /**
+     * Delete an existing user.
+     * @param userID Id of the user.
+     * @throws UserStoreException
+     */
+    void deleteUser(String userID) throws UserStoreException;
+
+    /**
+     * Delete a group.
+     * @param groupId ID of the Group.
+     * @throws UserStoreException
+     */
+    void deleteGroup(String groupId) throws UserStoreException;
+
+    /**
+     * To check whether a user store is read only     *
      * @return True if the user store is read only, unless returns false
      * @throws UserStoreException
      */
     boolean isReadOnly() throws UserStoreException;
 
     /**
-     * Returns UserStoreConfig which consists of user store configurations.
-     *
+     * Returns UserStoreConfig which consists of user store configurations.     *
      * @return UserStoreConfig which consists of user store configurations
      */
     UserStoreConfig getUserStoreConfig();

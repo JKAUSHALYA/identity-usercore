@@ -25,10 +25,10 @@ import org.wso2.carbon.identity.user.core.exception.AuthorizationFailure;
 import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
 import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
-import org.wso2.carbon.identity.user.core.manager.AuthorizationManager;
-import org.wso2.carbon.identity.user.core.manager.IdentityManager;
-import org.wso2.carbon.identity.user.core.model.Permission;
-import org.wso2.carbon.identity.user.core.principal.User;
+import org.wso2.carbon.identity.user.core.manager.VirtualAuthorizationStore;
+import org.wso2.carbon.identity.user.core.manager.VirtualIdentityStore;
+import org.wso2.carbon.identity.user.core.bean.Permission;
+import org.wso2.carbon.identity.user.core.bean.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,14 +40,14 @@ import java.util.Map;
 public class AppTest {
 
     private AuthenticationManager authManager = null;
-    private AuthorizationManager authzManager = null;
-    private IdentityManager identityManager = null;
+    private VirtualAuthorizationStore authzManager = null;
+    private VirtualIdentityStore virtualIdentityStore = null;
 
     public void configure() throws UserStoreException {
 
         authManager = BasicUserRealmService.getInstance().getAuthenticationManager();
-        authzManager = BasicUserRealmService.getInstance().getAuthorizationManager();
-        identityManager = BasicUserRealmService.getInstance().getIdentityManager();
+        authzManager = BasicUserRealmService.getInstance().getVirtualAuthorizationStore();
+        virtualIdentityStore = BasicUserRealmService.getInstance().getVirtualIdentityStore();
     }
 
     private void addUser() throws UserStoreException, AuthorizationStoreException {
@@ -55,7 +55,7 @@ public class AppTest {
         Map<String, String> userClaims = new HashMap<>();
         userClaims.put("userName", "admin");
 
-        User user = identityManager
+        User user = virtualIdentityStore
                 .addUser(null, userClaims, "password".toCharArray(), new ArrayList<String>(), false);
         String userId = user.getUserID();
 

@@ -20,17 +20,13 @@ import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
 import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.principal.User;
 
-import java.util.List;
 import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 
 /**
  * AuthenticationManager
  */
-public class AuthenticationManager implements PersistenceManager {
+public class AuthenticationManager {
 
     /**
      * Authenticate a user.
@@ -41,45 +37,6 @@ public class AuthenticationManager implements PersistenceManager {
      */
     public AuthenticationContext authenticate(Callback [] callbacks) throws UserStoreException, AuthenticationFailure {
 
-        char [] password = null;
-        String username = null;
-
-        for (Callback callback : callbacks) {
-
-            if (callback instanceof NameCallback) {
-                username = ((NameCallback) callback).getName();
-            } else if (callback instanceof PasswordCallback) {
-                password = ((PasswordCallback) callback).getPassword();
-            }
-        }
-
-        if (username == null) {
-            throw new AuthenticationFailure("Username is null");
-        }
-
-        List<User> users = BasicUserRealmService.getInstance().getIdentityManager()
-                .searchUserFromClaim("username", username);
-        AuthenticationContext context = new AuthenticationContext();
-
-        for (User user : users) {
-            context = BasicUserRealmService.getInstance().getIdentityManager().authenticate(user.getUserID(), password);
-        }
-
-        return context;
-    }
-
-    public AuthenticationContext authenticate(String claimAttribute, String value, Object credential) throws
-            UserStoreException, AuthenticationFailure {
-
-        List<User> users = BasicUserRealmService.getInstance().getIdentityManager().searchUserFromClaim
-                (claimAttribute, value);
-        AuthenticationContext context = new AuthenticationContext();
-
-        for (User user : users) {
-            context = BasicUserRealmService.getInstance().getIdentityManager().authenticate(user
-                    .getUserID(), credential);
-        }
-
-        return context;
+        return BasicUserRealmService.getInstance().getVirtualIdentityStore().authenticate(callbacks);
     }
 }
