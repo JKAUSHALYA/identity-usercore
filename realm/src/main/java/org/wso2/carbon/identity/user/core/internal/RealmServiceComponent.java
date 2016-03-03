@@ -22,11 +22,11 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
-import org.wso2.carbon.identity.user.core.service.UserRealmService;
+import org.wso2.carbon.identity.user.core.common.CarbonRealmServiceImpl;
+import org.wso2.carbon.identity.user.core.service.RealmService;
 
 /**
- * OSGI Component which handles the Identity Management.
+ * OSGI Component which handles the User Management.
  */
 @Component(
         name = "org.wso2.carbon.identity.user.core.internal.RealmServiceComponent",
@@ -41,8 +41,8 @@ public class RealmServiceComponent {
     public void registerRealmService(BundleContext bundleContext) {
 
         try {
-            registration = bundleContext.registerService(UserRealmService.class.getName(),
-                    BasicUserRealmService.getInstance(), null);
+            registration = bundleContext.registerService(RealmService.class.getName(),
+                    CarbonRealmServiceImpl.getInstance(), null);
         } catch (Throwable t) {
             log.error(t);
         }

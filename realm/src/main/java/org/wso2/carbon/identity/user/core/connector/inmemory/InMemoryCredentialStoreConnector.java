@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core.manager;
+package org.wso2.carbon.identity.user.core.connector.inmemory;
 
-import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
-import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
+import org.wso2.carbon.identity.user.core.connector.CredentialStoreConnector;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
-import org.wso2.carbon.identity.user.core.exception.UserStoreException;
+import org.wso2.carbon.identity.user.core.exception.IdentityStoreException;
 
 import javax.security.auth.callback.Callback;
 
 /**
- * AuthenticationManager
+ * In memory connector for the Credential store.
  */
-public class AuthenticationManager {
+public class InMemoryCredentialStoreConnector implements CredentialStoreConnector {
 
-    /**
-     * Authenticate a user.
-     * @param callbacks Callbacks to get the user information
-     * @return Authentication context.
-     * @throws UserStoreException
-     * @throws AuthenticationFailure
-     */
-    public AuthenticationContext authenticate(Callback [] callbacks) throws UserStoreException, AuthenticationFailure {
+    @Override
+    public String getCredentialStoreId() {
+        return null;
+    }
 
-        return BasicUserRealmService.getInstance().getVirtualIdentityStore().authenticate(callbacks);
+    @Override
+    public String authenticate(Callback[] callbacks) throws IdentityStoreException, AuthenticationFailure {
+        return null;
+    }
+
+    @Override
+    public boolean canHandle(Callback[] callbacks) {
+        return false;
     }
 }

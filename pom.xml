@@ -8,10 +8,10 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon.identity</groupId>
-    <artifactId>identity-usercore</artifactId>
+    <groupId>org.wso2.carbon.user</groupId>
+    <artifactId>user-usercore</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>identity-usercore</name>
+    <name>user-usercore</name>
     <url>http://maven.apache.org</url>
     <packaging>pom</packaging>
 

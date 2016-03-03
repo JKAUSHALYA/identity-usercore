@@ -17,9 +17,9 @@
 package org.wso2.carbon.identity.user.core.bean;
 
 import org.wso2.carbon.identity.user.core.exception.AuthorizationFailure;
-import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.manager.VirtualAuthorizationStore;
-import org.wso2.carbon.identity.user.core.manager.VirtualIdentityStore;
+import org.wso2.carbon.identity.user.core.exception.IdentityStoreException;
+import org.wso2.carbon.identity.user.core.store.AuthorizationStore;
+import org.wso2.carbon.identity.user.core.store.IdentityStore;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
@@ -36,14 +36,13 @@ public class User {
     private String tenantId;
     private String subject;
 
-    private VirtualIdentityStore virtualIdentityStore;
-    private VirtualAuthorizationStore virtualAuthorizationStore = new VirtualAuthorizationStore();
+    private IdentityStore identityStore = new IdentityStore();;
+    private AuthorizationStore authorizationStore = new AuthorizationStore();
 
-    public User(String userID, String userStoreID) throws UserStoreException {
+    public User(String userID, String userStoreID) throws IdentityStoreException {
 
         this.userID = userID;
         this.userStoreID = userStoreID;
-        virtualIdentityStore = new VirtualIdentityStore();
     }
 
     /**
@@ -55,31 +54,55 @@ public class User {
     }
 
     /**
+     * Get user id.
+     * @return User id.
+     */
+    public String getUserID() {
+        return userID;
+    }
+
+    /**
+     * Get user store id.
+     * @return User store id.
+     */
+    public String getUserStoreID() {
+        return userStoreID;
+    }
+
+    /**
+     * Get tenant id.
+     * @return Tenant id.
+     */
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    /**
      * Get claims of this user.
      * @return Map of User claims.
-     * @throws UserStoreException
+     * @throws IdentityStoreException
      */
-    public Map<String, String> getClaims() throws UserStoreException {
-        return virtualIdentityStore.getUserClaimValues(userID);
+    public Map<String, String> getClaims() throws IdentityStoreException {
+        return identityStore.getUserClaimValues(userID);
     }
 
     /**
      * Get claims of this user for given URIs.
      * @param claimURIs Claim URIs that needs to be retrieved.
      * @return Map of User claims.
-     * @throws UserStoreException
+     * @throws IdentityStoreException
      */
-    public Map<String, String> getClaims(List<String> claimURIs) throws UserStoreException {
-        return virtualIdentityStore.getUserClaimValues(userID, claimURIs);
+    public Map<String, String> getClaims(List<String> claimURIs) throws IdentityStoreException {
+        return identityStore.getUserClaimValues(userID, claimURIs);
     }
 
     /**
      * Get the groups assigned to this user.
      * @return List of Groups assigned to this user.
-     * @throws UserStoreException
+     * @throws IdentityStoreException
      */
-    public List<Group> getGroups() throws UserStoreException {
-        return virtualIdentityStore.getGroupsOfUser(userID);
+    public List<Group> getGroups() throws IdentityStoreException {
+        return identityStore.getGroupsOfUser(userID);
     }
 
     /**
@@ -87,7 +110,7 @@ public class User {
      * @return List of Roles assigned to this user.
      */
     public List<Role> getRoles() {
-        return null;
+        return authorizationStore.getRolesForUser(userID);
     }
 
     /**
@@ -97,7 +120,7 @@ public class User {
      * @throws AuthorizationFailure
      */
     public boolean isAuthorized(Permission permission) throws AuthorizationFailure {
-        return virtualAuthorizationStore.isUserAuthorized(userID, permission);
+        return authorizationStore.isUserAuthorized(userID, permission);
     }
 
     /**
@@ -106,7 +129,7 @@ public class User {
      * @return True if this user is in the Role.
      */
     public boolean isInRole(String roleName) {
-        return virtualAuthorizationStore.isUserInRole(userID, roleName);
+        return authorizationStore.isUserInRole(userID, roleName);
     }
 
     /**
@@ -115,7 +138,7 @@ public class User {
      * @return True if this User is in the group.
      */
     public boolean isInGroup(String groupName) {
-        return virtualIdentityStore.isUserInGroup(userID, groupName);
+        return identityStore.isUserInGroup(userID, groupName);
     }
 
     /**
@@ -123,7 +146,7 @@ public class User {
      * @param newUsername New user name.
      */
     public void rename(String newUsername) {
-        throw new NotImplementedException();
+        identityStore.renameUser(userID, newUsername);
     }
 
     /**
@@ -131,15 +154,17 @@ public class User {
      * @param claims List of claims to be set.
      */
     public void setClaims(Map<String, String> claims) {
+
+        // TODO: Implement this.
         throw new NotImplementedException();
     }
 
     /**
-     * Add a new Role list by <b>replacing</b> the existing group list. (PUT)
+     * Add a new Group list by <b>replacing</b> the existing group list. (PUT)
      * @param newGroupList New group list that needs to replace the existing list.
      */
     public void updateGroups(List<Group> newGroupList) {
-        virtualIdentityStore.updateGroupsInUser(userID, newGroupList);
+        identityStore.updateGroupsInUser(userID, newGroupList);
     }
 
     /**
@@ -148,7 +173,7 @@ public class User {
      * @param unAssignList List to be removed from the existing list.
      */
     public void updateGroups(List<Group> assignList, List<Group> unAssignList) {
-        virtualIdentityStore.updateGroupsInUser(userID, assignList, unAssignList);
+        identityStore.updateGroupsInUser(userID, assignList, unAssignList);
     }
 
     /**
@@ -156,7 +181,7 @@ public class User {
      * @param newRolesList List of Roles needs to be assigned to this User.
      */
     public void updateRoles(List<Role> newRolesList) {
-        virtualAuthorizationStore.updateRolesInUser(userID, newRolesList);
+        authorizationStore.updateRolesInUser(userID, newRolesList);
     }
 
     /**
@@ -165,6 +190,6 @@ public class User {
      * @param unAssignList List to be removed from the existing list.
      */
     public void updateRoles(List<Role> assignList, List<Role> unAssignList) {
-        virtualAuthorizationStore.updateRolesInUser(userID, assignList, unAssignList);
+        authorizationStore.updateRolesInUser(userID, assignList, unAssignList);
     }
 }

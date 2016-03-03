@@ -16,9 +16,9 @@
 
 package org.wso2.carbon.identity.user.core.bean;
 
-import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.manager.VirtualIdentityStore;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.wso2.carbon.identity.user.core.exception.IdentityStoreException;
+import org.wso2.carbon.identity.user.core.store.AuthorizationStore;
+import org.wso2.carbon.identity.user.core.store.IdentityStore;
 
 import java.util.List;
 
@@ -30,9 +30,10 @@ public class Group {
     private String groupID;
     private String userStoreID;
     private String groupName;
-    private VirtualIdentityStore virtualIdentityStore = new VirtualIdentityStore();
+    private IdentityStore identityStore = new IdentityStore();
+    private AuthorizationStore authorizationStore = new AuthorizationStore();
 
-    public Group(String groupID, String userStoreID, String groupName) throws UserStoreException {
+    public Group(String groupID, String userStoreID, String groupName) throws IdentityStoreException {
         this.groupID = groupID;
         this.userStoreID = userStoreID;
         this.groupName = groupName;
@@ -50,8 +51,8 @@ public class Group {
      * Get the users assigned to this group.
      * @return List of users assigned to this group.
      */
-    public List<User> getUsers() throws UserStoreException {
-        return virtualIdentityStore.getUsersOfGroup(groupID, userStoreID);
+    public List<User> getUsers() throws IdentityStoreException {
+        return identityStore.getUsersOfGroup(groupID, userStoreID);
     }
 
     /**
@@ -59,15 +60,15 @@ public class Group {
      * @return List of Permissions.
      */
     public List<Permission> getPermissions() {
-        return null;
+        return authorizationStore.getPermissionsForGroup(groupID);
     }
 
     /**
      * Get Roles assigned to this Group.
      * @return List of Roles.
      */
-    public List<Group> getRoles() {
-        throw new NotImplementedException();
+    public List<Role> getRoles() {
+        return authorizationStore.getRolesOfGroup(groupID);
     }
 
     /**
@@ -76,25 +77,25 @@ public class Group {
      * @return True if authorized.
      */
     public boolean isAuthorized(Permission permission) {
-        throw new NotImplementedException();
+        return authorizationStore.isGroupAuthorized(groupID, permission);
     }
 
     /**
      * Checks whether the User in this Group.
-     * @param user User to be checked.
+     * @param userId Id of the User to be checked.
      * @return True if User is in this Group.
      */
-    public boolean hasUser(User user) {
-        throw new NotImplementedException();
+    public boolean hasUser(String userId) {
+        return identityStore.isUserInGroup(userId, groupID);
     }
 
     /**
      * Checks whether this Group has the Role.
-     * @param role Role to be checked.
+     * @param roleName Name of the Role to be checked.
      * @return True if this Group has the Role.
      */
-    public boolean hasRole(Role role) {
-        throw new NotImplementedException();
+    public boolean hasRole(String roleName) {
+        return authorizationStore.isGroupInRole(groupID, roleName);
     }
 
     /**
@@ -102,6 +103,7 @@ public class Group {
      * @param newUserList List of Users needs to be assigned to this Group.
      */
     public void updateUsers(List<User> newUserList) {
+        identityStore.updateUsersInGroup(groupID, newUserList);
     }
 
     /**
@@ -110,6 +112,7 @@ public class Group {
      * @param unAssignList List to be removed from the existing list.
      */
     public void updateUsers(List<User> assignList, List<User> unAssignList) {
+        identityStore.updateUsersInGroup(groupID, assignList, unAssignList);
     }
 
     /**
@@ -117,6 +120,7 @@ public class Group {
      * @param newRoleList List of Roles needs to be assigned to this Group.
      */
     public void updateRoles(List<Role> newRoleList) {
+        authorizationStore.updateRolesInGroup(groupID, newRoleList);
     }
 
     /**
@@ -125,6 +129,6 @@ public class Group {
      * @param unAssignList List to be removed from the existing list.
      */
     public void updateRoles(List<Role> assignList, List<Role> unAssignList) {
+        authorizationStore.updateRolesInGroup(groupID, assignList, unAssignList);
     }
-
 }

@@ -19,7 +19,7 @@ package org.wso2.carbon.identity.user.core.exception;
 /**
  * User store exception.
  */
-public class UserStoreException extends Exception {
+public class IdentityStoreException extends Exception {
 
     /**
      * Default serial
@@ -28,23 +28,23 @@ public class UserStoreException extends Exception {
 
     private int errorCode;
 
-    public UserStoreException() {
+    public IdentityStoreException() {
         super();
     }
 
-    public UserStoreException(String message, Throwable cause) {
+    public IdentityStoreException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public UserStoreException(String message, boolean convertMessage) {
+    public IdentityStoreException(String message, boolean convertMessage) {
         super(message);
     }
 
-    public UserStoreException(String message) {
+    public IdentityStoreException(String message) {
         super(message);
     }
 
-    public UserStoreException(Throwable cause) {
+    public IdentityStoreException(Throwable cause) {
         super(cause);
     }
 

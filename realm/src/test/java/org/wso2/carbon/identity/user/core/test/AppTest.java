@@ -18,17 +18,17 @@ package org.wso2.carbon.identity.user.core.test;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.wso2.carbon.identity.user.core.common.BasicUserRealmService;
-import org.wso2.carbon.identity.user.core.context.AuthenticationContext;
+import org.wso2.carbon.identity.user.core.bean.Permission;
+import org.wso2.carbon.identity.user.core.bean.User;
+import org.wso2.carbon.identity.user.core.common.CarbonRealmServiceImpl;
+import org.wso2.carbon.identity.user.core.context.AuthenticationInfo;
 import org.wso2.carbon.identity.user.core.exception.AuthenticationFailure;
 import org.wso2.carbon.identity.user.core.exception.AuthorizationFailure;
 import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
-import org.wso2.carbon.identity.user.core.exception.UserStoreException;
-import org.wso2.carbon.identity.user.core.manager.AuthenticationManager;
-import org.wso2.carbon.identity.user.core.manager.VirtualAuthorizationStore;
-import org.wso2.carbon.identity.user.core.manager.VirtualIdentityStore;
-import org.wso2.carbon.identity.user.core.bean.Permission;
-import org.wso2.carbon.identity.user.core.bean.User;
+import org.wso2.carbon.identity.user.core.exception.IdentityStoreException;
+import org.wso2.carbon.identity.user.core.store.AuthorizationStore;
+import org.wso2.carbon.identity.user.core.store.CredentialStore;
+import org.wso2.carbon.identity.user.core.store.IdentityStore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,32 +39,32 @@ import java.util.Map;
  */
 public class AppTest {
 
-    private AuthenticationManager authManager = null;
-    private VirtualAuthorizationStore authzManager = null;
-    private VirtualIdentityStore virtualIdentityStore = null;
+    private CredentialStore authManager = null;
+    private AuthorizationStore authzManager = null;
+    private IdentityStore identityStore = null;
 
-    public void configure() throws UserStoreException {
+    public void configure() throws IdentityStoreException {
 
-        authManager = BasicUserRealmService.getInstance().getAuthenticationManager();
-        authzManager = BasicUserRealmService.getInstance().getVirtualAuthorizationStore();
-        virtualIdentityStore = BasicUserRealmService.getInstance().getVirtualIdentityStore();
+        authManager = CarbonRealmServiceImpl.getInstance().getCredentialStore();
+        authzManager = CarbonRealmServiceImpl.getInstance().getAuthorizationStore();
+        identityStore = CarbonRealmServiceImpl.getInstance().getIdentityStore();
     }
 
-    private void addUser() throws UserStoreException, AuthorizationStoreException {
+    private void addUser() throws IdentityStoreException, AuthorizationStoreException {
 
         Map<String, String> userClaims = new HashMap<>();
         userClaims.put("userName", "admin");
 
-        User user = virtualIdentityStore
-                .addUser(null, userClaims, "password".toCharArray(), new ArrayList<String>(), false);
+        User user = identityStore
+                .addUser(userClaims, "password".toCharArray(), new ArrayList<String>());
         String userId = user.getUserID();
 
-        authzManager.addUserRole(userId, "internal/everyone", "PRIMARY");
+        authzManager.updateRolesInUser(userId, "internal/everyone", "PRIMARY");
         authzManager.addRolePermission("internal/everyone", "/permissions/login", "PRIMARY");
     }
 
     @Test
-    public void testApp() throws UserStoreException, AuthorizationStoreException, AuthorizationFailure,
+    public void testApp() throws IdentityStoreException, AuthorizationStoreException, AuthorizationFailure,
             AuthenticationFailure {
 
         configure();
@@ -73,7 +73,7 @@ public class AppTest {
         String userName = "admin";
         String password = "password";
 
-        AuthenticationContext context = authManager.authenticate("userName", userName, password.toCharArray());
+        AuthenticationInfo context = authManager.authenticate("userName", userName, password.toCharArray());
         String userId = context.getUser().getUserID();
         Assert.assertTrue(authzManager.isUserAuthorized(userId, new Permission("/permissions/login")));
     }

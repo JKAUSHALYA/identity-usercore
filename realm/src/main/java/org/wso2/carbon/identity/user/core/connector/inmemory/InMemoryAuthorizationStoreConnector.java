@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core.stores.inmemory;
+package org.wso2.carbon.identity.user.core.connector.inmemory;
 
-import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
 import org.wso2.carbon.identity.user.core.bean.Group;
 import org.wso2.carbon.identity.user.core.bean.Permission;
 import org.wso2.carbon.identity.user.core.bean.Role;
-import org.wso2.carbon.identity.user.core.stores.AuthorizationStore;
+import org.wso2.carbon.identity.user.core.connector.AuthorizationStoreConnector;
+import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * In memory authorization store.
  */
-public class InMemoryAuthorizationStore implements AuthorizationStore {
+public class InMemoryAuthorizationStoreConnector implements AuthorizationStoreConnector {
 
     private Map<String, Role> roles = new HashMap<>();
     private Map<String, Permission> permissions = new HashMap<>();
@@ -39,16 +39,15 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
     private Map<String, List<Group>> roleGroup = new HashMap<>();
     private Map<String, List<Permission>> rolePermissions = new HashMap<>();
 
-    public InMemoryAuthorizationStore() {
+    public InMemoryAuthorizationStoreConnector() {
 
-        roles.put("admin", new Role("admin"));
-        roles.put("internal/everyone", new Role("internal/everyone"));
+        roles.put("admin", new Role("admin", "1"));
+        roles.put("internal/everyone", new Role("internal/everyone", "2"));
 
-        permissions.put("/permissions/all", new Permission("/permissions/all"));
-        permissions.put("/permissions/login", new Permission("/permissions/login"));
+        permissions.put("/permissions/all", new Permission("/permissions/all", "read"));
+        permissions.put("/permissions/login", new Permission("/permissions/login", "write"));
     }
 
-    @Override
     public void addUserRole(String userId, String roleName) throws AuthorizationStoreException {
 
         if (!roles.containsKey(roleName)) {
@@ -60,7 +59,7 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
 
             for (Role role : rolesOfUser) {
 
-                if (role.getRoleName().equals(roleName)) {
+                if (role.getName().equals(roleName)) {
                     throw new AuthorizationStoreException("Role already exist for user.");
                 }
             }
@@ -71,6 +70,11 @@ public class InMemoryAuthorizationStore implements AuthorizationStore {
             rolesOfUser.add(roles.get(roleName));
             userRoles.put(userId, rolesOfUser);
         }
+    }
+
+    @Override
+    public void assignUserRole(String userId, String roleName) throws AuthorizationStoreException {
+
     }
 
     @Override

@@ -18,28 +18,15 @@ package org.wso2.carbon.identity.user.core.context;
 
 import org.wso2.carbon.identity.user.core.bean.User;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * AuthenticationContext
+ * AuthenticationInfo
  */
-public class AuthenticationContext {
-
-    private Map<Object, Object> properties = new HashMap<>();
+public class AuthenticationInfo {
 
     private User user;
 
-    public AuthenticationContext(User user) {
+    public AuthenticationInfo(User user) {
         this.user = user;
-    }
-
-    public void addProperty(Object key, Object value) {
-        properties.put(key, value);
-    }
-
-    public Object getProperty(Object key) {
-        return properties.get(key);
     }
 
     public User getUser() {

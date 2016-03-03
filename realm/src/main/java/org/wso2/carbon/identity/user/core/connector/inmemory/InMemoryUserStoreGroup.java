@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core.stores.inmemory;
+package org.wso2.carbon.identity.user.core.connector.inmemory;
 
 import java.util.HashMap;
 import java.util.List;

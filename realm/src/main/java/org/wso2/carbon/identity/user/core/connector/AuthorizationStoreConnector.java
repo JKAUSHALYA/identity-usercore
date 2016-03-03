@@ -14,33 +14,18 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.user.core.stores;
+package org.wso2.carbon.identity.user.core.connector;
 
-import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
 import org.wso2.carbon.identity.user.core.bean.Permission;
 import org.wso2.carbon.identity.user.core.bean.Role;
+import org.wso2.carbon.identity.user.core.exception.AuthorizationStoreException;
 
 import java.util.List;
 
 /**
  * Authorization store.
  */
-public interface AuthorizationStore {
-
-    /**
-     * Add a user against a role.
-     * @param userId Id of the user.
-     * @param roleName Name of the role.
-     */
-    public void assignUserRole(String userId, String roleName) throws AuthorizationStoreException;
-
-    /**
-     * Add a permission to a role.
-     * @param roleName Name of the role.
-     * @param permissionName Name of the permission.
-     * @throws AuthorizationStoreException
-     */
-    public void addRolePermission(String roleName, String permissionName) throws AuthorizationStoreException;
+public interface AuthorizationStoreConnector {
 
     /**
      * Get the role of from role id.
@@ -92,4 +77,19 @@ public interface AuthorizationStore {
      * @return List of permissions associated to the user.
      */
     public List<Permission> getPermissionsForRole(String roleName);
+
+    /**
+     * Add a user against a role.
+     * @param userId Id of the user.
+     * @param roleName Name of the role.
+     */
+    public void assignUserRole(String userId, String roleName) throws AuthorizationStoreException;
+
+    /**
+     * Add a permission to a role.
+     * @param roleName Name of the role.
+     * @param permissionName Name of the permission.
+     * @throws AuthorizationStoreException
+     */
+    public void addRolePermission(String roleName, String permissionName) throws AuthorizationStoreException;
 }

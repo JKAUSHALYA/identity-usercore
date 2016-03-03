@@ -16,14 +16,18 @@
 
 package org.wso2.carbon.identity.user.core.exception;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * AuthenticationFailure
  */
 public class AuthenticationFailure extends Exception {
 
-    private Exception cause;
+    private Throwable cause;
+    private List<Throwable> failures = new ArrayList<>();
 
-    public AuthenticationFailure(Exception e) {
+    public AuthenticationFailure(Throwable e) {
         this.cause = e;
     }
 
@@ -34,5 +38,13 @@ public class AuthenticationFailure extends Exception {
     @Override
     public Throwable getCause() {
         return this.cause;
+    }
+
+    public void addFailure(Throwable t) {
+        failures.add(t);
+    }
+
+    public List<Throwable> getFailures() {
+        return failures;
     }
 }

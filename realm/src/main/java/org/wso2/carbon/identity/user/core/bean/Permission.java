@@ -21,28 +21,46 @@ package org.wso2.carbon.identity.user.core.bean;
  */
 public class Permission {
 
-    private String permissionString;
+    private String resourceId;
+    private String action;
 
-    public Permission(String permission) {
-
-        this.permissionString = permission;
+    public Permission(String resourceId, String action) {
+        this.resourceId = resourceId;
+        this.action = action;
     }
 
+    /**
+     * Get the permission String (Resource ID + Action).
+     * @return Permission string.
+     */
     public String getPermissionString() {
+        return resourceId + action;
+    }
 
-        return this.permissionString;
+    /**
+     * Get the resource id.
+     * @return Resource id.
+     */
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    /**
+     * Get the action.
+     * @return Action.
+     */
+    public String getAction() {
+        return action;
     }
 
     @Override
     public boolean equals(Object permission) {
-
         return permission instanceof Permission && ((Permission) permission).getPermissionString()
-                .equals(this.permissionString);
+                .equals(resourceId + action);
     }
 
     @Override
     public int hashCode() {
-
-        return this.permissionString.hashCode();
+        return getPermissionString().hashCode();
     }
 }
